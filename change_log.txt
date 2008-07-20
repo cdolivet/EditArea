@@ -1,3 +1,7 @@
+**** v 0.7.1.3 ****
+- Fix a bug introduced in Firefox 3.0.1 => the browser is no more able to render properly "pre" element with left padding...
+- Add Robots.txt (thanks to Pavle Ggardijan) and T-SQL syntax definition files (thanks to Miladin Joksic)
+
 **** v 0.7.1.2 ****
 - Fix a  bug on the full screen mode (regression added on 0.7.1.1)
 
