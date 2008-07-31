@@ -253,7 +253,7 @@
 			this.switchClassSticky(icon, 'editAreaButtonNormal', false);
 			
 			this.smooth_selection=false;
-			$("selection_field").style.display= "none";
+			this.selection_field.style.display= "none";
 			$("cursor_pos").style.display= "none";
 			$("end_bracket").style.display= "none";
 		}else{
@@ -261,7 +261,7 @@
 			//this.switchClass(icon,'editAreaButtonSelected');
 			this.switchClassSticky(icon, 'editAreaButtonSelected', false);
 			this.smooth_selection=true;
-			$("selection_field").style.display= "block";
+			this.selection_field.style.display= "block";
 			$("cursor_pos").style.display= "block";
 			$("end_bracket").style.display= "block";
 		}	
@@ -1086,4 +1086,13 @@
 				
 			this.files[id]['edited']= to;
 		}
+	};
+
+	EditArea.prototype.set_show_line_colors = function(new_value){
+		this.show_line_colors = new_value;
+		
+		if( new_value )
+			this.selection_field.className	+= ' show_colors';
+		else
+			this.selection_field.className	= this.selection_field.className.replace( / show_colors/g, '' );
 	};

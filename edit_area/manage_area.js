@@ -6,10 +6,7 @@
 
 	EditArea.prototype.check_line_selection= function(timer_checkup){
 		//if(do_highlight==false){
-		/*if(this.once!=1){
-			alert("ONCE a"+ this.isResizing);
-			this.once=1;
-		}*/
+
 		if(!editAreas[this.id])
 			return false;
 		
@@ -57,7 +54,7 @@
 					else
 						this.selection_field.innerHTML=content;
 						
-					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
+					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
 						this.maj_highlight(infos);
 				}		
 			}

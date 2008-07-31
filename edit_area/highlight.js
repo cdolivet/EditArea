@@ -28,7 +28,7 @@
 	};
 	
 	EditArea.prototype.disable_highlight= function(displayOnly){		
-		$("selection_field").innerHTML="";
+		this.selection_field.innerHTML="";
 		this.content_highlight.style.visibility="hidden";
 		// replacing the node is far more faster than deleting it's content in firefox
 		var new_Obj= this.content_highlight.cloneNode(false);

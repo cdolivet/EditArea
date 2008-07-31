@@ -83,6 +83,11 @@ body, html, table, form, textarea{
 	overflow: hidden;
 }
 
+#selection_field.show_colors{
+	z-index: 3;
+	background-color:#EDF9FC;
+}
+
 #container.wrap_text #content_highlight, #container.wrap_text #selection_field{
 	white-space: pre-wrap;       /* css-3 */
 	white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */

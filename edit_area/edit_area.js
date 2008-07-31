@@ -24,6 +24,7 @@
 		this.allready_used_syntax= new Object();
 		
 		this.textareaFocused= false;
+		this.highlight_selection_line= null;
 		this.previous= new Array();
 		this.next= new Array();
 		this.last_undo="";
@@ -134,6 +135,8 @@
 		if(!this.settings['is_editable'])
 			this.set_editable(false);
 		
+		this.set_show_line_colors( this.settings['show_line_colors'] );
+		
 		if(syntax_selec= $("syntax_selection"))
 		{
 			// set up syntax selection lsit in the toolbar
@@ -195,10 +198,7 @@
 			$("editor").onkeypress= keyDown;
 		else
 			$("editor").onkeydown= keyDown;
-	/*	if(this.nav['isIE'] || this.nav['isFirefox'])
-			this.textarea.onkeydown= keyDown;
-		else if
-			this.textarea.onkeypress= keyDown;*/
+
 		for(var i=0; i<this.inlinePopup.length; i++){
 			if(this.nav['isIE'] || this.nav['isFirefox'])
 				$(this.inlinePopup[i]["popup_id"]).onkeydown= keyDown;

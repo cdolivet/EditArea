@@ -1,6 +1,7 @@
 
 /***** To do Needed *****/
 
+- make an option for enabling syntax color update on the edited line (disable the blue bar)
 - change_callback is called one time at the beginning event if the text has not changed
 - check later init call with safari 3
 - improve callback documentation.

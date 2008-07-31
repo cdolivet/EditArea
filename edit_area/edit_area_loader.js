@@ -7,7 +7,7 @@
 ******/
 
 function EditAreaLoader(){
-	this.version= "0.7.1.3";
+	this.version= "0.7.2";
 	date= new Date();
 	this.start_time=date.getTime();
 	this.win= "loading";	// window loading state
@@ -39,6 +39,7 @@ function EditAreaLoader(){
 		,end_toolbar: ""		// or end_toolbar
 		,is_multi_files: false		// enable the multi file mode (the textarea content is ignored)
 		,allow_resize: "both"	// possible values: "no", "both", "x", "y"
+		,show_line_colors: false	// if the highlight is disabled for the line currently beeing edited (if enabled => heavy CPU use)
 		,min_width: 400
 		,min_height: 125
 		,replace_tab_by_spaces: false
