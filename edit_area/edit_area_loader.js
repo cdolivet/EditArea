@@ -54,7 +54,7 @@ function EditAreaLoader(){
 		,gecko_spellcheck: false	// enable/disable by default the gecko_spellcheck
 		,fullscreen: false
 		,is_editable: true
-		,wrap_text: false
+		,wrap_text: false		// NOT IMPLEMENTED
 		,load_callback: ""		// click on load button (function name)
 		,save_callback: ""		// click on save button (function name)
 		,change_callback: ""	// textarea onchange trigger (function name)

@@ -234,26 +234,18 @@
 			this.textarea.spellcheck= this.settings["gecko_spellcheck"];
 		}
 		
+		if(this.nav['isIE']){
+			this.textarea.style.marginTop= "-1px";
+		}
+		/*
 		if(this.nav['isOpera']){
 			this.editor_area.style.position= "absolute";
-			this.selection_field.style.marginTop= "-1pt";			
-			this.selection_field.style.paddingTop= "1pt";
-			$("cursor_pos").style.marginTop= "-1pt";
-			$("end_bracket").style.marginTop= "-1pt";
-			this.content_highlight.style.marginTop= "-1pt";
-			/*$("end_bracket").style.marginTop="1px";*/
-		}
+		}*/
 		
 		if(this.nav['isSafari']){
 			this.editor_area.style.position= "absolute";
-			this.selection_field.style.marginTop= "-1pt";			
-			this.selection_field.style.paddingTop= "1pt";
-			this.selection_field.style.marginLeft= "3px";			
-			this.content_highlight.style.marginTop= "-1pt";
-			this.content_highlight.style.marginLeft= "3px";
-			$("cursor_pos").style.marginLeft= "3px";	
-			$("end_bracket").style.marginLeft= "3px";	
-			
+			this.textarea.style.marginLeft="-3px";
+			this.textarea.style.marginTop="1px";
 		}
 		
 		// si le textarea n'est pas grand, un click sous le textarea doit provoquer un focus sur le textarea
@@ -299,7 +291,7 @@
 			//1.1) Calc the new width to use for display
 			if( this.settings['wrap_text'] )
 			{
-				var area_width= this.result.offsetWidth -50;
+				//	var area_width= this.result.offsetWidth -50;
 			}
 			else
 			{
@@ -310,19 +302,12 @@
 				}
 			}
 			
-			if(this.nav['isIE']>=7)
-				area_width-=45;
-	
+			
 			//1.2) the width is not the same, we must resize elements
 			if(this.textarea.previous_scrollWidth!=area_width)
 			{	
-				if(!this.nav['isOpera'] && this.textarea.style.width && (this.textarea.style.width.replace("px","") < area_width))
-					area_width+=50;
-			
-				if(this.nav['isGecko'] || this.nav['isOpera'])
-					this.container.style.width= (area_width+45)+"px";
-				else
-					this.container.style.width= area_width+"px";
+				
+				this.container.style.width= area_width+"px";
 				this.textarea.style.width= area_width+"px";
 				this.content_highlight.style.width= area_width+"px";	
 				this.textarea.previous_scrollWidth=area_width;

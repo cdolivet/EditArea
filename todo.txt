@@ -1,7 +1,6 @@
 
 /***** To do Needed *****/
 
-- make an option for enabling syntax color update on the edited line (disable the blue bar)
 - change_callback is called one time at the beginning event if the text has not changed
 - check later init call with safari 3
 - improve callback documentation.
@@ -9,7 +8,7 @@
 /***** To do Optionnal*****/
 
 - possibility to switch on/off line numbers (allow to get more space)
-- remove the bottom scrollbar is there is no neeed to get one. (adjust the width to the real content width). There is allways horizontal scrollbar even if no content.
+- remove the bottom scrollbar is there is no neeed to get one. (adjust the width to the real content width). 
 - amelioration of the scroll_to_view function for when there is several lines selected (center a little more the selected text)
 - darken background of the selection when syntax highlight is on (not easy to see actually under firefox)
 - improve opera 9 compatibility (very hard, need help for workaround) cf "Browser remarks".

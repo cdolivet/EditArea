@@ -14,12 +14,12 @@ body, html, table, form, textarea{
 #editor{
 	border: solid #888 1px;
 	overflow: visible;
- /*	position: absolute;*/
 }
 
 #result{
 	z-index: 4; 
-	overflow: auto;
+	overflow-x: auto;
+	overflow-y: scroll;
 	border-top: solid #888 1px;
 	border-bottom: solid #888 1px;
 	position: relative;
@@ -35,7 +35,7 @@ body, html, table, form, textarea{
 	border: solid blue 0;
 	position: relative; 
 	z-index: 10;
-	padding: 0 5px 0 0;
+	padding: 0 5px 0 45px;
 	/*padding-right: 5px;*/ 
 }
 
@@ -43,16 +43,14 @@ body, html, table, form, textarea{
 	position: relative; 
 	top: 0; 
 	left: 0;
-	padding: 0 0 0 45px;
+	margin: 0;
+	padding: 0;
 	width: 100%;
 	height: 100%; 
-	/*position: absolute;*/
 	overflow: hidden;  
 	z-index: 7; 
-	border: solid green 0;
+	border-width: 0;
 	background-color: transparent;
-/*	background: none;
-	*/
 }
 
 #textarea, #textarea:hover{
@@ -61,18 +59,16 @@ body, html, table, form, textarea{
 
 #content_highlight{
 	white-space: pre;
-	/*background-color: #FFFFFF;*/
-	margin: 0 0 0 45px;
-	padding: 1px 0 0 0;
+	margin: 0;
+	padding: 0;
 	position : absolute; 
 	z-index: 4; 
-	overflow: visible; 
-	border: solid yellow 0;
+	overflow: visible;
 }
 
 
 #selection_field{
-	margin: 1px 0 0 45px; 
+	margin: 0; 
 	background-color: #E1F2F9; 
 	height: 1px;  
 	position: absolute;
@@ -86,6 +82,7 @@ body, html, table, form, textarea{
 #selection_field.show_colors{
 	z-index: 3;
 	background-color:#EDF9FC;
+	color:transparent;
 }
 
 #container.wrap_text #content_highlight, #container.wrap_text #selection_field{
@@ -103,7 +100,8 @@ body, html, table, form, textarea{
 	border-right: solid black 1px;
 	z-index:8;
 	width: 38px;
-	padding-right: 5px;
+	padding: 0 5px 0 0;
+	margin: 0 0 0 -45px;
 	text-align: right;
 	color: #AAAAAA;
 }
