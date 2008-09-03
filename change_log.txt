@@ -1,4 +1,5 @@
 **** v 0.7.2 ****
+- add Chrome support
 - add show_line_colors init() option for enabling syntax color display and update on the currently edited line (disable the blue bar) (default to false)
 - Add Perl syntax definition file (thanks to Christoph Pinkel)
 - Bug fix: there allways was an horizontal scrollbar even if the content fit in the area.

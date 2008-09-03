@@ -1,3 +1,15 @@
+FOR AUTOCOMPLETION:
+- work with tab editing (each one having it's context)
+- allow $ in prefix
+- allow to call user function for autocompletion
+- correctly display the box with window limits
+- enable "live" detection for new syntax keyword in the file
+- display a long description of the keyword (arround the box)
+
+DONE:
+- beeing able to prefix those word by key words (sort of namespace)
+- hide it on click
+- enable it for ctrl+space in the middle of a word
 
 /***** To do Needed *****/
 

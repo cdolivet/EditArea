@@ -1,0 +1,42 @@
+#auto_completion_area
+{
+	background:	#FFF;
+	border:		solid 1px #888;
+	position:	absolute;
+	z-index:	15;
+	width:	280px;
+	height:	180px;
+	overflow: auto;
+}
+
+#auto_completion_area a, #auto_completion_area a:visited
+{
+	display:	block;
+	padding:	0 2px 1px;
+	color:		#000;
+	text-decoration:none;
+}
+
+#auto_completion_area a:hover, #auto_completion_area a:focus, #auto_completion_area a.focus
+{
+	background:	#D6E1FE;
+	text-decoration:none;
+}
+
+#auto_completion_area ul
+{
+	margin:	0;
+	padding: 0;
+	list-style: none inside;
+}
+#auto_completion_area li
+{
+	padding:	0;
+}
+
+
+#auto_completion_area .prefix
+{
+	font-style: italic;
+	padding: 0 3px;
+}

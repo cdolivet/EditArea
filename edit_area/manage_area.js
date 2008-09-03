@@ -95,10 +95,8 @@
 		//this.debug.value="tps total: "+ (tend-t1) + " tps get_infos: "+ (t2-t1)+ " tps jaune: "+ (t3-t2) +" tps cursor: "+ (tend-t3)+" "+typeof(infos);
 		
 		if(timer_checkup){
-			if(this.do_highlight==true)	//can slow down check speed when highlight mode is on
-				setTimeout("editArea.check_line_selection(true)", 50);
-			else
-				setTimeout("editArea.check_line_selection(true)", 50);
+			//if(this.do_highlight==true)	//can slow down check speed when highlight mode is on
+			setTimeout("editArea.check_line_selection(true)", this.check_line_selection_timer);
 		}
 	};
 
@@ -360,7 +358,6 @@
 		return true;
 		
 	};
-	
 	
 	EditArea.prototype.findEndBracket= function(infos, bracket){
 			

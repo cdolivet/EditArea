@@ -22,7 +22,7 @@ function EditAreaLoader(){
 	this.waiting_loading= new Object(); 	// files that must be loaded in order to allow the script to really start
 	// scripts that must be loaded in the iframe
 	this.scripts_to_load= new Array("elements_functions", "resize_area", "reg_syntax");
-	this.sub_scripts_to_load= new Array("edit_area", "manage_area" ,"edit_area_functions", "keyboard", "search_replace", "highlight", "regexp");
+	this.sub_scripts_to_load= new Array("edit_area", "manage_area" ,"edit_area_functions", "keyboard", "search_replace", "highlight", "regexp" );
 	
 	this.resize= new Array(); // contain resizing datas
 	this.hidden= new Object();	// store datas of the hidden textareas
@@ -33,7 +33,8 @@ function EditAreaLoader(){
 		,smooth_selection: true
 		,font_size: "10"		// not for IE
 		,font_family: "monospace"	// can be "verdana,monospace". Allow non monospace font but Firefox get smaller tabulation with non monospace fonts. IE doesn't change the tabulation width and Opera doesn't take this option into account... 
-		,start_highlight: false	// if start with highlight			
+		,start_highlight: false	// if start with highlight
+		,autocompletion: false	// DEV ONLY if enable auto completion			
 		,toolbar: "search, go_to_line, fullscreen, |, undo, redo, |, select_font,|, change_smooth_selection, highlight, reset_highlight, |, help"
 		,begin_toolbar: ""		//  "new_document, save, load, |"
 		,end_toolbar: ""		// or end_toolbar
@@ -83,7 +84,8 @@ function EditAreaLoader(){
 			['help', 'help.gif', 'show_help', false],
 			['save', 'save.gif', 'save', false],
 			['load', 'load.gif', 'load', false],
-			['fullscreen', 'fullscreen.gif', 'toggle_full_screen', false]
+			['fullscreen', 'fullscreen.gif', 'toggle_full_screen', false],
+			['autocompletion', 'autocompletion.gif', 'toggle_autocompletion', true],
 		];
 			
 	// navigator identification
@@ -112,7 +114,7 @@ function EditAreaLoader(){
 		this.nav['isIE']=false;			
 	}
 	this.nav['isGecko'] = (ua.indexOf('Gecko') != -1);
-	
+
 	if(this.nav['isFirefox'] =(ua.indexOf('Firefox') != -1))
 		this.nav['isFirefox'] = ua.replace(/^.*?Firefox.*?([0-9\.]+).*$/i, "$1");
 	// Iceweasel is a clone of Firefox 	
@@ -121,11 +123,14 @@ function EditAreaLoader(){
 	
 	if(this.nav['isCamino'] =(ua.indexOf('Camino') != -1))
 		this.nav['isCamino'] = ua.replace(/^.*?Camino.*?([0-9\.]+).*$/i, "$1");
+
+	if(this.nav['isChrome'] =(ua.indexOf('Chrome') != -1))
+		this.nav['isChrome'] = ua.replace(/^.*?Chrome.*?([0-9\.]+).*$/i, "$1");
 	
 	if(this.nav['isSafari'] =(ua.indexOf('Safari') != -1))
 		this.nav['isSafari']= ua.replace(/^.*?Version\/([0-9]+\.[0-9]+).*$/i, "$1");
 	
-	if(this.nav['isIE']>=6 || this.nav['isOpera']>=9 || this.nav['isFirefox'] || this.nav['isCamino'] || this.nav['isSafari']>=3)
+	if(this.nav['isIE']>=6 || this.nav['isOpera']>=9 || this.nav['isFirefox'] || this.nav['isChrome'] || this.nav['isCamino'] || this.nav['isSafari']>=3)
 		this.nav['isValidBrowser']=true;
 	else
 		this.nav['isValidBrowser']=false;
@@ -166,27 +171,20 @@ EditAreaLoader.prototype ={
 				editAreaLoader.add_event(form, "reset", EditAreaLoader.prototype.reset);
 			}
 		}
-		
-		
-	/*	if(editAreaLoader.nav['isIE']){	// launch IE selection checkup
-			for(var i in editAreas){
-				editAreaLoader.init_ie_textarea(i);
-			}
-		}*/
 		editAreaLoader.add_event(window, "unload", function(){for(var i in editAreas){editAreaLoader.delete_instance(i);}});	// ini callback
 	},
 	
 	// init the checkup of the selection of the IE textarea
 	init_ie_textarea : function(id){
-		textarea=document.getElementById(id);
+		var t=document.getElementById(id);
 		try{
-			if(textarea && typeof(textarea.focused)=="undefined"){
-				textarea.focus();
-				textarea.focused=true;
-				textarea.selectionStart= textarea.selectionEnd= 0;			
-				get_IE_selection(textarea);
-				editAreaLoader.add_event(textarea, "focus", IE_textarea_focus);
-				editAreaLoader.add_event(textarea, "blur", IE_textarea_blur);
+			if(t && typeof(t.focused)=="undefined"){
+				t.focus();
+				t.focused=true;
+				t.selectionStart= t.selectionEnd= 0;			
+				get_IE_selection(t);
+				editAreaLoader.add_event(t, "focus", IE_textarea_focus);
+				editAreaLoader.add_event(t, "blur", IE_textarea_blur);
 				
 			}
 		}catch(ex){}
