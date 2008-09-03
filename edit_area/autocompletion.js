@@ -489,4 +489,5 @@ var EditArea_autocompletion= {
 };
 
 // Load as a plugin
-editArea.add_plugin("autocompletion", EditArea_autocompletion);
+editArea.settings['plugins'][ editArea.settings['plugins'].length ] = 'autocompletion';
+editArea.add_plugin('autocompletion', EditArea_autocompletion);

@@ -448,10 +448,14 @@
 	};
 	
 	EditArea.prototype.add_plugin= function(plug_name, plug_obj){
-		this.plugins[plug_name]=plug_obj;
-		plug_obj.baseURL=parent.editAreaLoader.baseURL + "plugins/" + plug_name + "/";
-		if( typeof(plug_obj.init)=="function" )
-			plug_obj.init();
+		for(var i=0; i<this.settings["plugins"].length; i++){
+			if(this.settings["plugins"][i]==plug_name){
+				this.plugins[plug_name]=plug_obj;
+				plug_obj.baseURL=parent.editAreaLoader.baseURL + "plugins/" + plug_name + "/";
+				if( typeof(plug_obj.init)=="function" )
+					plug_obj.init();
+			}
+		}
 	};
 	
 	EditArea.prototype.load_css= function(url){
