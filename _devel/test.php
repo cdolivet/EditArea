@@ -7,7 +7,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 	<title>EditArea - the code editor in a textarea</title>
 	<!-- <link href="style.css" rel="stylesheet" type="text/css"> -->
-	<style>
+	<style> 
 	/*	html{
 			width: 80%;
 		}*/
@@ -277,7 +277,7 @@ editAreaLoader.init({
 	
 	function open_file1()
 	{
-		var new_file= {id: "to\\ é # € to", text: "aaaaaaaaaaa\n print('toto'); ", title: 'beautiful title', do_highlight: true, syntax: 'php'};
+		var new_file= {id: "to\\ ï¿½ # ï¿½ to", text: "aaaaaaaaaaa\n print('toto'); ", title: 'beautiful title', do_highlight: true, syntax: 'php'};
 		//editAreaLoader.execCommand('src', 'open_file', new_file);
 		editAreaLoader.openFile('src', new_file);
 		//alert(editAreaLoader.execCommand('src', 'save_file', file_id)['text']);
@@ -292,21 +292,21 @@ editAreaLoader.init({
 	
 	function close_file1()
 	{
-		editAreaLoader.closeFile('src', "to\\ é # € to");
+		editAreaLoader.closeFile('src', "to\\ ï¿½ # ï¿½ to");
 	}
 	
 	function open_many_files()
 	{
-		var new_file= {id: "tod\\ ddf é # € to", text: "aaaaaaaaaaa", title: 'beautifsdfs dfl title'};
+		var new_file= {id: "tod\\ ddf ï¿½ # ï¿½ to", text: "aaaaaaaaaaa", title: 'beautifsdfs dfl title'};
 		editAreaLoader.openFile('src', new_file);
 		
-		var new_file= {id: "tdsf # € to", text: "aaaaaaaaaaa", title: 'beautifsdfs dfl title'};
+		var new_file= {id: "tdsf # ï¿½ to", text: "aaaaaaaaaaa", title: 'beautifsdfs dfl title'};
 		editAreaLoader.openFile('src', new_file);
 		
-		var new_file= {id: "tdsff# € to", text: "aaaaaaaaaaa", title: 'beautifsdffl title'};
+		var new_file= {id: "tdsff# ï¿½ to", text: "aaaaaaaaaaa", title: 'beautifsdffl title'};
 		editAreaLoader.openFile('src', new_file);
 		
-		var new_file= {id: "tdfg€ to", text: "aaaaaaaaaaa", title: 'beautifsdffl title'};
+		var new_file= {id: "tdfgï¿½ to", text: "aaaaaaaaaaa", title: 'beautifsdffl title'};
 		editAreaLoader.openFile('src', new_file);
 		
 		var new_file= {id: "tdfdsf to", text: "aaaaaaaaaaa", title: 'beautifsdffl title'};
@@ -393,7 +393,7 @@ Test with php syntax.<br />
 <?php
 	$val='
 < ?php	
-	é &ecute; &#x92c;&#x93f;&#x930;&#x92f;&#x93e;&#x928;&#x940;
+	&ecute; &#x92c;&#x93f;&#x930;&#x92f;&#x93e;&#x928;&#x940;
 	//Thanks to TinyMCE developpers!
 	
 	$authors= array();

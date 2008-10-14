@@ -2,12 +2,12 @@
  *
  *	EditArea 
  * 	Developped by Christophe Dolivet
- *	Released under LGPL and Apache licenses
+ *	Released under LGPL, Apache and BSD licenses (use the one you want)
  *
 ******/
 
 function EditAreaLoader(){
-	this.version= "0.7.2.2";
+	this.version= "0.7.2.3";
 	date= new Date();
 	this.start_time=date.getTime();
 	this.win= "loading";	// window loading state
@@ -123,7 +123,10 @@ function EditAreaLoader(){
 	// grandparadisio is a clone of Firefox 	
 	if(this.nav['GranParadiso'] =(ua.indexOf('GranParadiso') != -1))
 		this.nav['isFirefox']= this.nav['isGranParadiso'] = ua.replace(/^.*?GranParadiso.*?([0-9\.]+).*$/i, "$1");
-	
+	// BonEcho is a clone of Firefox
+	if(this.nav['BonEcho'] =(ua.indexOf('BonEcho') != -1))
+		this.nav['isFirefox']= this.nav['isBonEcho'] = ua.replace(/^.*?BonEcho.*?([0-9\.]+).*$/i, "$1");
+		
 	if(this.nav['isCamino'] =(ua.indexOf('Camino') != -1))
 		this.nav['isCamino'] = ua.replace(/^.*?Camino.*?([0-9\.]+).*$/i, "$1");
 
