@@ -25,6 +25,7 @@
 			,syntax_selection_allow: "css,html,js,php,python,vb,xml,c,cpp,sql,basic,pas,brainfuck"
 			,is_multi_files: true
 			,EA_load_callback: "editAreaLoaded"
+			,show_line_colors: true
 		});
 		
 		editAreaLoader.init({
@@ -126,7 +127,7 @@
 <form action='' method='post'>
 	<fieldset>
 		<legend>Example 1</legend>
-		<p>Test in English with php syntax, highlighted, toggle enabled, resize enabled and default toolbar. Also offer the possibility to switch on/off the readonly mode</p>
+		<p>Test in English with php syntax, highlighted, toggle enabled, resize enabled and default toolbar. Also offer the possibility to switch on/off the readonly mode.</p>
 		<textarea id="example_1" style="height: 350px; width: 100%;" name="test_1">
 <?php	
 	$authors= array();
@@ -170,7 +171,7 @@
 	</fieldset>
 	<fieldset>
 		<legend>Example 2</legend>
-		<p>Multi file mode example with syntax selection option.</p>
+		<p>Multi file mode example with syntax selection option. The highlight colors of the selected line is also shown.</p>
 		<textarea id="example_2" style="height: 250px; width: 100%;" name="test_2">
 		</textarea>
 		<p>Custom controls:<br />

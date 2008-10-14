@@ -79,8 +79,8 @@ editAreaLoader.init({
 		//	,submit_callback: "my_submit"
 			,allow_resize: "both" // "both"
 	//		,allow_toggle: true
-			,language: "en"
-			,syntax: "js"
+			,language: "eo"
+			,syntax: "coldfusion"
 		//	,wrap_text: true
 		//	,is_editable: false
 		//	,is_multi_files: true
@@ -118,7 +118,7 @@ editAreaLoader.init({
 			,allow_resize: "none" // "both"
 			,allow_toggle: true
 			,language: "en"
-			,syntax: "wiki"
+			,syntax: "js"
 			,browsers: "known"
 			//,display: "later" // set to "later" for a later transform or "onload" for a direct transform to EditArea
 			,debug: true

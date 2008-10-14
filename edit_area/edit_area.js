@@ -235,6 +235,12 @@
 			this.textarea.spellcheck= this.settings["gecko_spellcheck"];
 		}
 		
+		/** Browser specific style fixes **/
+		
+		// fix rendering bug for highlighted lines beginning with no tabs
+		if( this.nav['isFirefox'] >= '3' )
+			this.content_highlight.style.borderLeft= "solid 1px transparent";
+		
 		if(this.nav['isIE']){
 			this.textarea.style.marginTop= "-1px";
 		}

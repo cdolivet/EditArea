@@ -7,7 +7,7 @@
 ******/
 
 function EditAreaLoader(){
-	this.version= "0.7.2";
+	this.version= "0.7.2.2";
 	date= new Date();
 	this.start_time=date.getTime();
 	this.win= "loading";	// window loading state
@@ -47,7 +47,7 @@ function EditAreaLoader(){
 		,allow_toggle: true		// true or false
 		,language: "en"
 		,syntax: ""
-		,syntax_selection_allow: "basic,brainfuck,c,cpp,css,html,js,pas,perl,php,python,ruby,robotstxt,sql,tsql,vb,xml"
+		,syntax_selection_allow: "basic,brainfuck,c,coldfusion,cpp,css,html,js,pas,perl,php,python,ruby,robotstxt,sql,tsql,vb,xml"
 		,display: "onload" 		// onload or later
 		,max_undo: 30
 		,browsers: "known"	// all or known
@@ -85,7 +85,7 @@ function EditAreaLoader(){
 			['save', 'save.gif', 'save', false],
 			['load', 'load.gif', 'load', false],
 			['fullscreen', 'fullscreen.gif', 'toggle_full_screen', false],
-			['autocompletion', 'autocompletion.gif', 'toggle_autocompletion', true],
+			['autocompletion', 'autocompletion.gif', 'toggle_autocompletion', true]
 		];
 			
 	// navigator identification
@@ -120,6 +120,9 @@ function EditAreaLoader(){
 	// Iceweasel is a clone of Firefox 	
 	if(this.nav['isIceweasel'] =(ua.indexOf('Iceweasel') != -1))
 		this.nav['isFirefox']= this.nav['isIceweasel'] = ua.replace(/^.*?Iceweasel.*?([0-9\.]+).*$/i, "$1");
+	// grandparadisio is a clone of Firefox 	
+	if(this.nav['GranParadiso'] =(ua.indexOf('GranParadiso') != -1))
+		this.nav['isFirefox']= this.nav['isGranParadiso'] = ua.replace(/^.*?GranParadiso.*?([0-9\.]+).*$/i, "$1");
 	
 	if(this.nav['isCamino'] =(ua.indexOf('Camino') != -1))
 		this.nav['isCamino'] = ua.replace(/^.*?Camino.*?([0-9\.]+).*$/i, "$1");
