@@ -32,22 +32,12 @@
 			newcss = document.createElement("style");
 			newcss.type="text/css";
 			newcss.media="all";
+			if(newcss.styleSheet){ // IE
+				newcss.styleSheet.cssText = styles;
+			} else { // W3C
+				newcss.appendChild(document.createTextNode(styles));
+			}
 			document.getElementsByTagName("head")[0].appendChild(newcss);
-			cssrules = styles.split("}");
-			newcss = document.styleSheets[0];
-			if(newcss.rules) { //IE
-				for(i=cssrules.length-2;i>=0;i--) {
-					newrule = cssrules[i].split("{");
-					newcss.addRule(newrule[0],newrule[1])
-				}
-			}
-			else if(newcss.cssRules) { //Firefox etc
-				for(i=cssrules.length-1;i>=0;i--) {
-					if(cssrules[i].indexOf("{")!=-1){
-						newcss.insertRule(cssrules[i]+"}",0);
-					}
-				}
-			}
 		}
 	};
 	

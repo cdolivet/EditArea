@@ -29,10 +29,10 @@ function showReport ( err ) {
 		};
 */
 	</script>
-<script language="Javascript" type="text/javascript" src="prototype.js"></script>
+<script language="Javascript" type="text/javascript" src="mootools-1.2.1-core-yc.js"></script>
 <!--
+<script language="Javascript" type="text/javascript" src="prototype.js"></script>
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
-<script language="Javascript" type="text/javascript" src="mootools.release.83.js"></script>
 -->
 
 <script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
@@ -48,12 +48,14 @@ function showReport ( err ) {
            ,EA_unload_callback: "my_EA_unload"
         });
         */
+
 editAreaLoader.init({
 			id: "src"	// id of the textarea to transform	
 			//,smooth_selection: false
-			//,font_size: "14"	// not for IE
+			,font_size: "10"	
 			//,font_family: "verdana,monospace"
 			,start_highlight: true	// if start with highlight
+			,cursor_position: "auto"
 		//	,autocompletion: true
 			//,begin_toolbar: "save, |"	// or end_toolbar
 		//	,toolbar: "new_document, save, load, |, search, go_to_line, |, undo, redo, |, select_font,|, change_smooth_selection, highlight, reset_highlight, |, help"
@@ -79,8 +81,8 @@ editAreaLoader.init({
 		//	,submit_callback: "my_submit"
 			,allow_resize: "both" // "both"
 	//		,allow_toggle: true
-			,language: "eo"
-			,syntax: "coldfusion"
+			,language: "fr"
+			,syntax: "php"
 		//	,wrap_text: true
 		//	,is_editable: false
 		//	,is_multi_files: true
@@ -93,7 +95,8 @@ editAreaLoader.init({
 			//,fullscreen: true
 			//,EA_load_callback: "test_aaa"
 		});
-		/* 
+
+		/*
 		Mini load for readonly mode 
 		
 editAreaLoader.init({
@@ -467,5 +470,6 @@ for($i=0; $i<5; $i++)
 	bouh
 </textarea>
 </form>
+<a href="http://www.google.fr">external link</a>
 </body>
 </html>

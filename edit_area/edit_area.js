@@ -96,8 +96,8 @@
 				parent.document.getElementById("frame_"+editArea.id).style.width= parent.document.getElementsByTagName("html")[0].clientWidth + "px";
 				parent.document.getElementById("frame_"+editArea.id).style.height= parent.document.getElementsByTagName("html")[0].clientHeight + "px";
 			}
-		
-			if(editArea.tab_browsing_area.style.display=='block' && !editArea.nav['isIE'])
+			
+			if(editArea.tab_browsing_area.style.display=='block' && ( !editArea.nav['isIE'] || editArea.nav['isIE'] >= 8 ) )
 			{
 				editArea.tab_browsing_area.style.height= "0px";
 				editArea.tab_browsing_area.style.height= (editArea.result.offsetTop - editArea.tab_browsing_area.offsetTop -1)+"px";
@@ -191,7 +191,9 @@
 		// insert css rules for highlight mode		
 		if(typeof(parent.editAreaLoader.syntax[this.settings["syntax"]])!="undefined"){
 			for(var i in parent.editAreaLoader.syntax){
-				this.add_style(parent.editAreaLoader.syntax[i]["styles"]);
+				if (typeof(parent.editAreaLoader.syntax[i]["styles"]) != "undefined"){
+					this.add_style(parent.editAreaLoader.syntax[i]["styles"]);
+				}
 			}
 		}
 		// init key events
@@ -241,7 +243,7 @@
 		if( this.nav['isFirefox'] >= '3' )
 			this.content_highlight.style.borderLeft= "solid 1px transparent";
 		
-		if(this.nav['isIE']){
+		if(this.nav['isIE'] && this.nav['isIE'] < 8 ){
 			this.textarea.style.marginTop= "-1px";
 		}
 		/*

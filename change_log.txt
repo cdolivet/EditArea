@@ -1,3 +1,10 @@
+**** v 0.7.3 ****
+- Add Finnish transaltion (thanks to Janne Mäntyharju)
+- Add 'cursor_position' init() option for defining where the cursor should be when the editor is show on the first time ('auto' or 'begin'). This was like 'auto' before now this is like 'begin' by default
+- better add_style method (faster than old one) thanks to Spellcoder
+- Bug fix: fix bug with mootools 1.2
+- Bug fix: if page had no stylesheets when editarea load, it would generate an error
+
 **** v 0.7.2.3 ****
 - it's now released under both LGPL, Apache, BSD license (you can use the one you prefer)
 - add support for bonEcho browser

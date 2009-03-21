@@ -7,7 +7,7 @@
 ******/
 
 function EditAreaLoader(){
-	this.version= "0.7.2.3";
+	this.version= "0.7.3";
 	date= new Date();
 	this.start_time=date.getTime();
 	this.win= "loading";	// window loading state
@@ -55,6 +55,7 @@ function EditAreaLoader(){
 		,gecko_spellcheck: false	// enable/disable by default the gecko_spellcheck
 		,fullscreen: false
 		,is_editable: true
+		,cursor_position: "begin"
 		,wrap_text: false		// NOT IMPLEMENTED
 		,load_callback: ""		// click on load button (function name)
 		,save_callback: ""		// click on save button (function name)
@@ -518,7 +519,7 @@ EditAreaLoader.prototype ={
 		if(window.frames["frame_"+id])
 		{
 			var frame=window.frames["frame_"+id];
-			area= window.frames["frame_"+id].editArea;
+			area= frame.editArea;
 			area.textarea.value= editAreas[id]["textarea"].value;
 			
 			// store display values;
@@ -526,6 +527,7 @@ EditAreaLoader.prototype ={
 			var selEnd= 0;
 			var scrollTop= 0;
 			var scrollLeft= 0;
+			var curPos	= editAreas[id]["settings"]["cursor_position"];
 
 			if(editAreas[id]["textarea"].use_last==true)
 			{
@@ -535,7 +537,7 @@ EditAreaLoader.prototype ={
 				var scrollLeft= editAreas[id]["textarea"].last_scrollLeft;
 				editAreas[id]["textarea"].use_last=false;
 			}
-			else
+			else if( curPos == "auto" )
 			{
 				try{
 					var selStart= editAreas[id]["textarea"].selectionStart;
@@ -557,8 +559,8 @@ EditAreaLoader.prototype ={
 			editAreas[id]["displayed"]=true;
 			area.execCommand("update_size");
 			
-			window.frames["frame_"+id].document.getElementById("result").scrollTop= scrollTop;
-			window.frames["frame_"+id].document.getElementById("result").scrollLeft= scrollLeft;
+			frame.document.getElementById("result").scrollTop= scrollTop;
+			frame.document.getElementById("result").scrollLeft= scrollLeft;
 			area.area_select(selStart, selEnd-selStart);
 			area.execCommand("toggle_on");
 

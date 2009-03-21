@@ -274,39 +274,43 @@
 				document.body.removeChild(div);
 			}
 			//textarea.focus();
-			var range = document.selection.createRange();	
-			var stored_range = range.duplicate();
-			stored_range.moveToElementText( textarea );
-			stored_range.setEndPoint( 'EndToEnd', range );
-			if(stored_range.parentElement()==textarea){
-				// the range don't take care of empty lines in the end of the selection
-				var elem= textarea;
-				var scrollTop= 0;
-				while(elem.parentNode){
-					scrollTop+= elem.scrollTop;
-					elem= elem.parentNode;
+			var range = document.selection.createRange();
+			try
+			{
+				var stored_range = range.duplicate();
+				stored_range.moveToElementText( textarea );
+				stored_range.setEndPoint( 'EndToEnd', range );
+				if(stored_range.parentElement()==textarea){
+					// the range don't take care of empty lines in the end of the selection
+					var elem= textarea;
+					var scrollTop= 0;
+					while(elem.parentNode){
+						scrollTop+= elem.scrollTop;
+						elem= elem.parentNode;
+					}
+				
+				//	var scrollTop= textarea.scrollTop + document.body.scrollTop;
+					
+				//	var relative_top= range.offsetTop - calculeOffsetTop(textarea) + scrollTop;
+					var relative_top= range.offsetTop - calculeOffsetTop(textarea)+ scrollTop;
+				//	alert("rangeoffset: "+ range.offsetTop +"\ncalcoffsetTop: "+ calculeOffsetTop(textarea) +"\nrelativeTop: "+ relative_top);
+					var line_start = Math.round((relative_top / textarea.ea_line_height) +1);
+					
+					var line_nb= Math.round(range.boundingHeight / textarea.ea_line_height);
+					
+			//		alert("store_range: "+ stored_range.text.length+"\nrange: "+range.text.length+"\nrange_text: "+ range.text);
+					var range_start= stored_range.text.length - range.text.length;
+					var tab= textarea.value.substr(0, range_start).split("\n");			
+					range_start+= (line_start - tab.length)*2;		// add missing empty lines to the selection
+					textarea.selectionStart = range_start;
+					
+					var range_end= textarea.selectionStart + range.text.length;
+					tab= textarea.value.substr(0, range_start + range.text.length).split("\n");			
+					range_end+= (line_start + line_nb - 1 - tab.length)*2;
+					textarea.selectionEnd = range_end;
 				}
-			
-			//	var scrollTop= textarea.scrollTop + document.body.scrollTop;
-				
-			//	var relative_top= range.offsetTop - calculeOffsetTop(textarea) + scrollTop;
-				var relative_top= range.offsetTop - calculeOffsetTop(textarea)+ scrollTop;
-			//	alert("rangeoffset: "+ range.offsetTop +"\ncalcoffsetTop: "+ calculeOffsetTop(textarea) +"\nrelativeTop: "+ relative_top);
-				var line_start = Math.round((relative_top / textarea.ea_line_height) +1);
-				
-				var line_nb= Math.round(range.boundingHeight / textarea.ea_line_height);
-				
-		//		alert("store_range: "+ stored_range.text.length+"\nrange: "+range.text.length+"\nrange_text: "+ range.text);
-				var range_start= stored_range.text.length - range.text.length;
-				var tab= textarea.value.substr(0, range_start).split("\n");			
-				range_start+= (line_start - tab.length)*2;		// add missing empty lines to the selection
-				textarea.selectionStart = range_start;
-				
-				var range_end= textarea.selectionStart + range.text.length;
-				tab= textarea.value.substr(0, range_start + range.text.length).split("\n");			
-				range_end+= (line_start + line_nb - 1 - tab.length)*2;
-				textarea.selectionEnd = range_end;
 			}
+			catch(e){}
 		}
 		setTimeout("get_IE_selection(document.getElementById('"+ textarea.id +"'));", 50);
 	};
@@ -324,12 +328,16 @@
 		if(!window.closed){ 
 			var nbLineStart=textarea.value.substr(0, textarea.selectionStart).split("\n").length - 1;
 			var nbLineEnd=textarea.value.substr(0, textarea.selectionEnd).split("\n").length - 1;
-			var range = document.selection.createRange();
-			range.moveToElementText( textarea );
-			range.setEndPoint( 'EndToStart', range );
-			range.moveStart('character', textarea.selectionStart - nbLineStart);
-			range.moveEnd('character', textarea.selectionEnd - nbLineEnd - (textarea.selectionStart - nbLineStart)  );
-			range.select();
+			try
+			{
+				var range = document.selection.createRange();
+				range.moveToElementText( textarea );
+				range.setEndPoint( 'EndToStart', range );
+				range.moveStart('character', textarea.selectionStart - nbLineStart);
+				range.moveEnd('character', textarea.selectionEnd - nbLineEnd - (textarea.selectionStart - nbLineStart)  );
+				range.select();
+			}
+			catch(e){}
 		}
 	};
 	

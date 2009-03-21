@@ -131,8 +131,7 @@
 		}else if(text_to_highlight.length==0){
 			text_to_highlight="\n ";
 		}else{			
-			var base_step=200;
-			
+			var base_step= 200;
 			var cpt= 0;
 			var end= Math.min(text_to_highlight.length, this.last_text_to_highlight.length);
             var step= base_step;
@@ -185,8 +184,6 @@
 			var trace_last= this.get_syntax_trace(change_last_text_line);
 			if(trace_new == trace_last){
 						
-			
-			
 				date= new Date();		
 				tps_middle_opti=date.getTime();	
 			
@@ -230,7 +227,6 @@
 				
 		// apply highlight
 		var updated_highlight= this.colorize_text(text_to_highlight);		
-		
 		// get the new highlight content
 			
 		date= new Date();
@@ -244,11 +240,13 @@
 					
 		// update the content of the highlight div by first updating a clone node (as there is no display in the same time for this node it's quite faster (5*))
 		var new_Obj= this.content_highlight.cloneNode(false);
-		if(this.nav['isIE'] || this.nav['isOpera'] || this.nav['isFirefox'] >= 3 )
+		if(this.nav['isIE'] || this.nav['isOpera'] )
 			new_Obj.innerHTML= "<pre><span class='"+ this.settings["syntax"] +"'>" + hightlighted_text.replace("\n", "<br/>") + "</span></pre>";	
 		else
-			new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";			
+			new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";
+	
 		this.content_highlight.parentNode.replaceChild(new_Obj, this.content_highlight);
+		
 		this.content_highlight= new_Obj;
 		if(infos["full_text"].indexOf("\r")!=-1)
 			this.last_text_to_highlight= infos["full_text"].replace(/\r/g, "");

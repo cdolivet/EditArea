@@ -49,7 +49,7 @@
 					content= content.replace(/</g,"&lt;");
 					content= content.replace(/>/g,"&gt;");
 					
-					if(this.nav['isIE'] || this.nav['isOpera'] || this.nav['isFirefox'] >= 3)
+					if( this.nav['isIE'] || this.nav['isOpera'] )
 						this.selection_field.innerHTML= "<pre>" + content.replace("\n", "<br/>") + "</pre>";	
 					else
 						this.selection_field.innerHTML=content;
@@ -173,32 +173,35 @@
 	
 	// set IE position in Firefox mode (textarea.selectionStart and textarea.selectionEnd)
 	EditArea.prototype.getIESelection= function(){	
-		var range = document.selection.createRange();
-		var stored_range = range.duplicate();
-		stored_range.moveToElementText( this.textarea );
-		stored_range.setEndPoint( 'EndToEnd', range );
-		if(stored_range.parentElement() !=this.textarea)
-			return;
-	
-		// the range don't take care of empty lines in the end of the selection
-		var scrollTop= this.result.scrollTop + document.body.scrollTop;
+		try{
+			var range = document.selection.createRange();
+			var stored_range = range.duplicate();
+			stored_range.moveToElementText( this.textarea );
+			stored_range.setEndPoint( 'EndToEnd', range );
+			if(stored_range.parentElement() !=this.textarea)
+				return;
 		
-		var relative_top= range.offsetTop - parent.calculeOffsetTop(this.textarea) + scrollTop;
-		
-		var line_start = Math.round((relative_top / this.lineHeight) +1);
-		
-		var line_nb=Math.round(range.boundingHeight / this.lineHeight);
-					
-		var range_start=stored_range.text.length - range.text.length;
-		var tab=this.textarea.value.substr(0, range_start).split("\n");			
-		range_start+= (line_start - tab.length)*2;		// add missing empty lines to the selection
-		this.textarea.selectionStart = range_start;
-		
-		var range_end=this.textarea.selectionStart + range.text.length;
-		tab=this.textarea.value.substr(0, range_start + range.text.length).split("\n");			
-		range_end+= (line_start + line_nb - 1 - tab.length)*2;
-		
-		this.textarea.selectionEnd = range_end;
+			// the range don't take care of empty lines in the end of the selection
+			var scrollTop= this.result.scrollTop + document.body.scrollTop;
+			
+			var relative_top= range.offsetTop - parent.calculeOffsetTop(this.textarea) + scrollTop;
+			
+			var line_start = Math.round((relative_top / this.lineHeight) +1);
+			
+			var line_nb=Math.round(range.boundingHeight / this.lineHeight);
+						
+			var range_start=stored_range.text.length - range.text.length;
+			var tab=this.textarea.value.substr(0, range_start).split("\n");			
+			range_start+= (line_start - tab.length)*2;		// add missing empty lines to the selection
+			this.textarea.selectionStart = range_start;
+			
+			var range_end=this.textarea.selectionStart + range.text.length;
+			tab=this.textarea.value.substr(0, range_start + range.text.length).split("\n");			
+			range_end+= (line_start + line_nb - 1 - tab.length)*2;
+			
+			this.textarea.selectionEnd = range_end;
+		}
+		catch(e){}
 		/*this.textarea.selectionStart = 10;
 		this.textarea.selectionEnd = 50;*/
 	};
@@ -410,8 +413,12 @@
 		var postLeft=0;
 		elem.innerHTML="<pre><span id='test_font_size_inner'>"+lineContent.substr(0, cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span></pre>";
 		posLeft= 45 + $('test_font_size_inner').offsetWidth;
+		
 
 		var posTop=this.lineHeight * (start_line-1);
+		
+		if( this.nav['isIE'] >= 8 )
+			posTop--;
 	
 		if(no_real_move!=true){	// when the cursor is hidden no need to move him
 			dest.style.top=posTop+"px";
