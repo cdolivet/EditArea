@@ -51,6 +51,7 @@ body, html, table, form, textarea{
 	z-index: 7; 
 	border-width: 0;
 	background-color: transparent;
+	resize: none;
 }
 
 #textarea, #textarea:hover{
