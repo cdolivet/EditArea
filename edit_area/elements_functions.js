@@ -230,8 +230,6 @@
 	
 	// allow to get infos on the selection: array(start, end)
 	function getSelectionRange(textarea){
-		//if(nav['isIE'])
-		//	get_IE_selection(textarea);
 		return {"start": textarea.selectionStart, "end": textarea.selectionEnd};
 	};
 	

@@ -473,7 +473,7 @@ var EditArea_autocompletion= {
 				// sort results
 				this.container.innerHTML		= '<ul>'+ lines.sort().join('') +'</ul>';
 				
-				var cursor	= $("cursor_pos");
+				var cursor	= _$("cursor_pos");
 				this.container.style.top		= ( cursor.cursor_top + editArea.lineHeight ) +"px";
 				this.container.style.left		= ( cursor.cursor_left + 8 ) +"px";
 				this._show();

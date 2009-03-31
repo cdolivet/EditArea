@@ -11,6 +11,23 @@
 	/*	html{
 			width: 80%;
 		}*/
+		::-moz-selection{
+	background:#cc0000;
+	color:#fff;
+}
+
+::selection {
+	background:#cc0000;
+	color:#fff;
+}
+
+textarea::-moz-selection, textarea::selection {
+background: #6DC0FF;
+color: #E1F2FF;
+}
+
+
+
 	</style>
 <script language='javascript'>
 /*
@@ -29,13 +46,14 @@ function showReport ( err ) {
 		};
 */
 	</script>
+	
 <script language="Javascript" type="text/javascript" src="mootools-1.2.1-core-yc.js"></script>
 <!--
 <script language="Javascript" type="text/javascript" src="prototype.js"></script>
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
 -->
 
-<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
+<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.gz"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
@@ -53,9 +71,9 @@ editAreaLoader.init({
 			id: "src"	// id of the textarea to transform	
 			//,smooth_selection: false
 			,font_size: "10"	
-			//,font_family: "verdana,monospace"
+			//,font_family: "verdana,monospace",
 			,start_highlight: true	// if start with highlight
-			,cursor_position: "auto"
+			,cursor_position: "begin"
 		//	,autocompletion: true
 			//,begin_toolbar: "save, |"	// or end_toolbar
 		//	,toolbar: "new_document, save, load, |, search, go_to_line, |, undo, redo, |, select_font,|, change_smooth_selection, highlight, reset_highlight, |, help"
@@ -79,7 +97,7 @@ editAreaLoader.init({
 			,EA_file_switch_off_callback: "my_EA_switch_off"
 	//		,EA_file_close_callback: "my_EA_file_close"
 		//	,submit_callback: "my_submit"
-			,allow_resize: "both" // "both"
+			,allow_resize: "y" // "both"
 	//		,allow_toggle: true
 			,language: "fr"
 			,syntax: "php"

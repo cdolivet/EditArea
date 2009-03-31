@@ -1,8 +1,8 @@
 	// change_to: "on" or "off"
 	EditArea.prototype.change_highlight= function(change_to){
 		if(this.settings["syntax"].length==0 && change_to==false){
-			this.switchClassSticky($("highlight"), 'editAreaButtonDisabled', true);
-			this.switchClassSticky($("reset_highlight"), 'editAreaButtonDisabled', true);
+			this.switchClassSticky(_$("highlight"), 'editAreaButtonDisabled', true);
+			this.switchClassSticky(_$("reset_highlight"), 'editAreaButtonDisabled', true);
 			return false;
 		}
 		
@@ -48,12 +48,12 @@
 		//setAttribute(icon, "class", getAttribute(icon, "class").replace(/ selected/g, "") );
 		//this.restoreClass(icon);
 		//this.switchClass(icon,'editAreaButtonNormal');
-		this.switchClassSticky($("highlight"), 'editAreaButtonNormal', true);
-		this.switchClassSticky($("reset_highlight"), 'editAreaButtonDisabled', true);
+		this.switchClassSticky(_$("highlight"), 'editAreaButtonNormal', true);
+		this.switchClassSticky(_$("reset_highlight"), 'editAreaButtonDisabled', true);
 	
 		this.do_highlight=false;
 	
-		this.switchClassSticky($("change_smooth_selection"), 'editAreaButtonSelected', true);
+		this.switchClassSticky(_$("change_smooth_selection"), 'editAreaButtonSelected', true);
 		if(typeof(this.smooth_selection_before_highlight)!="undefined" && this.smooth_selection_before_highlight===false){
 			this.change_smooth_selection_mode(false);
 		}
@@ -74,14 +74,14 @@
 		//var icon= document.getElementById("highlight");
 		//setAttribute(icon, "class", getAttribute(icon, "class") + " selected");
 		//this.switchClass(icon,'editAreaButtonSelected');
-		//this.switchClassSticky($("highlight"), 'editAreaButtonNormal', false);
-		this.switchClassSticky($("highlight"), 'editAreaButtonSelected', false);
-		this.switchClassSticky($("reset_highlight"), 'editAreaButtonNormal', false);
+		//this.switchClassSticky(_$("highlight"), 'editAreaButtonNormal', false);
+		this.switchClassSticky(_$("highlight"), 'editAreaButtonSelected', false);
+		this.switchClassSticky(_$("reset_highlight"), 'editAreaButtonNormal', false);
 		
 		this.smooth_selection_before_highlight=this.smooth_selection;
 		if(!this.smooth_selection)
 			this.change_smooth_selection_mode(true);
-		this.switchClassSticky($("change_smooth_selection"), 'editAreaButtonDisabled', true);
+		this.switchClassSticky(_$("change_smooth_selection"), 'editAreaButtonDisabled', true);
 		
 		
 		this.do_highlight=true;
@@ -226,28 +226,59 @@
 		tps_end_opti=date.getTime();	
 				
 		// apply highlight
-		var updated_highlight= this.colorize_text(text_to_highlight);		
+		var updated_highlight= this.colorize_text(text_to_highlight);
+				
 		// get the new highlight content
-			
 		date= new Date();
 		tps2=date.getTime();
-		//updated_highlight= "<div class='keywords'>"+updated_highlight+"</div>";
-		var hightlighted_text= stay_begin + updated_highlight + stay_end;
-		//this.previous_hightlight_content= tab_text.join("<br>");
+		var hightlighted_text	= stay_begin + updated_highlight + stay_end;
 		
 		date= new Date();
 		inner1=date.getTime();		
 					
 		// update the content of the highlight div by first updating a clone node (as there is no display in the same time for this node it's quite faster (5*))
-		var new_Obj= this.content_highlight.cloneNode(false);
-		if(this.nav['isIE'] || this.nav['isOpera'] )
-			new_Obj.innerHTML= "<pre><span class='"+ this.settings["syntax"] +"'>" + hightlighted_text.replace("\n", "<br/>") + "</span></pre>";	
-		else
-			new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";
-	
-		this.content_highlight.parentNode.replaceChild(new_Obj, this.content_highlight);
 		
-		this.content_highlight= new_Obj;
+		/*var a_spans				= this.content_highlight.getElementsByTagName('span');
+		if( a_spans.length > 0 )
+		{
+			var rootSpan	= a_spans[0];
+			a_spans			= rootSpan.getElementsByTagName('span');
+			tmp	= stay_begin.match(/<span/g);
+			var nbBeforeSpan		= tmp === null ? 0 : tmp.length;
+			tmp	= stay_end.match(/<span/g);
+			var nbAfterSpan			= tmp === null ? 0 : tmp.length;
+			
+			lastStartNode	= nbBeforeSpan > 0 ? a_spans[nbBeforeSpan-1] : rootSpan.firstChild;
+			firstEndNode	= nbAfterSpan > 0 ? a_spans[a_spans.length-nbAfterSpan] : null;
+			while( lastStartNode.parentNode != rootSpan ){
+			 	lastStartNode	= lastStartNode.parentNode;
+			}
+			nextNode		= lastStartNode.nextSibling;
+			while( nextNode && nextNode != firstEndNode )
+			{
+				tmp			= nextNode;
+				nextNode	= nextNode.nextSibling;
+				tmp.parentNode.removeChild( tmp );
+			}
+			var tmpNode 	= document.createElement( 'div' );
+			tmpNode.innerHTML	= updated_highlight;
+			while( tmpNode.childNodes.length > 0 ){
+				lastStartNode.parentNode.insertBefore( tmpNode.firstChild, lastStartNode.nextSibling );
+				lastStartNode	= lastStartNode.nextSibling;
+			}
+		}
+		else*/
+		{
+			var new_Obj= this.content_highlight.cloneNode(false);
+			if( ( this.nav['isIE'] && this.nav['isIE'] < 8 ) || this.nav['isOpera'] )
+				new_Obj.innerHTML= "<pre><span class='"+ this.settings["syntax"] +"'>" + hightlighted_text + "</span></pre>";	
+			else
+				new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";
+	
+			this.content_highlight.parentNode.replaceChild(new_Obj, this.content_highlight);
+		
+			this.content_highlight= new_Obj;
+		}
 		if(infos["full_text"].indexOf("\r")!=-1)
 			this.last_text_to_highlight= infos["full_text"].replace(/\r/g, "");
 		else
@@ -263,7 +294,7 @@
 			tps_join=inner1-tps2;			
 			tps_td2=tps3-inner1;
 			//lineNumber=tab_text.length;
-			//this.debug.value+=" \nNB char: "+$("src").value.length+" Nb line: "+ lineNumber;
+			//this.debug.value+=" \nNB char: "+_$("src").value.length+" Nb line: "+ lineNumber;
 			this.debug.value= "Tps optimisation "+tot1+" (second part: "+tot_middle+") | tps reg exp: "+tot2+" | tps join: "+tps_join;
 			this.debug.value+= " | tps update highlight content: "+tps_td2+"("+tps3+")\n";
 			this.debug.value+=debug_opti;

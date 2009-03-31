@@ -1,3 +1,15 @@
+**** v 0.7.4 ****
+- Add Internet explorer 8 support (but sadly I must use IE7 emulate mode in iframe due to a bug with tabulation width not beeing resized in IE's textarea) 
+- Add Safari 4 support
+- Add Chrome 2 support
+- Add Simplified Chinese translation "zh" (thanks to Abentian)
+- Add Bulgariane translation "bg" (thanks to Valentin Hristov)
+- Rename internal function $() by _$()
+- Bug fix: EditArea.update_size sometimes uses undefined variable
+- Bug fix: Template.html was not valid XHTML
+- Bug fix: The checked attribute of the toogle button was not defined in xhtml syntax
+- Bug fix: If the editArea was loaded on a page related to a domain which was itself an iframe comming from another domain a JS error was thrown on load 
+
 **** v 0.7.3 ****
 - Add Finnish transaltion (thanks to Janne Mäntyharju)
 - Add 'cursor_position' init() option for defining where the cursor should be when the editor is show on the first time ('auto' or 'begin'). This was like 'auto' before now this is like 'begin' by default

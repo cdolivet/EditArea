@@ -7,7 +7,7 @@
 ******/
 
 function EditAreaLoader(){
-	this.version= "0.7.3";
+	this.version= "0.7.4";
 	date= new Date();
 	this.start_time=date.getTime();
 	this.win= "loading";	// window loading state
@@ -133,10 +133,10 @@ function EditAreaLoader(){
 
 	if(this.nav['isChrome'] =(ua.indexOf('Chrome') != -1))
 		this.nav['isChrome'] = ua.replace(/^.*?Chrome.*?([0-9\.]+).*$/i, "$1");
-	
+
 	if(this.nav['isSafari'] =(ua.indexOf('Safari') != -1))
 		this.nav['isSafari']= ua.replace(/^.*?Version\/([0-9]+\.[0-9]+).*$/i, "$1");
-	
+
 	if(this.nav['isIE']>=6 || this.nav['isOpera']>=9 || this.nav['isFirefox'] || this.nav['isChrome'] || this.nav['isCamino'] || this.nav['isSafari']>=3)
 		this.nav['isValidBrowser']=true;
 	else
@@ -316,7 +316,7 @@ EditAreaLoader.prototype ={
 			span.id= "EditAreaArroundInfos_"+id;
 			var html="";
 			if(editAreas[id]["settings"]["allow_toggle"]){
-				checked=(editAreas[id]["settings"]["display"]=="onload")?"checked":"";
+				checked=(editAreas[id]["settings"]["display"]=="onload")?"checked='checked'":"";
 				html+="<div id='edit_area_toggle_"+i+"'>";
 				html+="<input id='edit_area_toggle_checkbox_"+ id +"' class='toggle_"+ id +"' type='checkbox' onclick='editAreaLoader.toggle(\""+ id +"\");' accesskey='e' "+checked+" />";
 				html+="<label for='edit_area_toggle_checkbox_"+ id +"'>{$toggle}</label></div>";	
@@ -354,6 +354,9 @@ EditAreaLoader.prototype ={
 		//	alert(this.tab_toolbar[i]+"\n"+ this.get_control_html(this.tab_toolbar[i]));
 			html_toolbar_content+= this.get_control_html(area["settings"]["tab_toolbar"][i], area["settings"]["language"]);
 		}
+		// translate toolbar text here for chrome 2
+		html_toolbar_content = this.translate(html_toolbar_content, area["settings"]["language"], "template"); 
+		
 		
 		// create javascript import rules for the iframe if the javascript has not been already loaded by the compressor
 		if(!this.iframe_script){
@@ -743,11 +746,13 @@ EditAreaLoader.prototype ={
 	},
 	
 	add_event : function(obj, name, handler) {
-		if (obj.attachEvent) {
-			obj.attachEvent("on" + name, handler);
-		} else{
-			obj.addEventListener(name, handler, false);
-		}
+		try{
+			if (obj.attachEvent) {
+				obj.attachEvent("on" + name, handler);
+			} else{
+				obj.addEventListener(name, handler, false);
+			}
+		}catch(e){}
 	},
 	
 	remove_event : function(obj, name, handler){

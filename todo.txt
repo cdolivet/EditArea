@@ -12,7 +12,8 @@ DONE:
 - enable it for ctrl+space in the middle of a word
 
 /***** To do Needed *****/
-
+ 
+- add real IE8 support (fix the tabulation width bug in IE8 that has now always the same width no matter the font-size and font-family in textarea but not in <pre>...)
 - change_callback is called one time at the beginning event if the text has not changed
 - check later init call with safari 3
 - improve callback documentation.

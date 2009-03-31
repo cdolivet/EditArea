@@ -31,7 +31,7 @@
 				this.selection_field.style.top=new_top+"px";	
 				this.selection_field.style.width=new_width+"px";
 				this.selection_field.style.height=new_height+"px";	
-				$("cursor_pos").style.top=new_top+"px";	
+				_$("cursor_pos").style.top=new_top+"px";	
 		
 				if(this.do_highlight==true){
 					var curr_text=infos["full_text"].split("\n");
@@ -49,11 +49,13 @@
 					content= content.replace(/</g,"&lt;");
 					content= content.replace(/>/g,"&gt;");
 					
-					if( this.nav['isIE'] || this.nav['isOpera'] )
-						this.selection_field.innerHTML= "<pre>" + content.replace("\n", "<br/>") + "</pre>";	
-					else
-						this.selection_field.innerHTML=content;
-						
+					if( this.nav['isIE'] || this.nav['isOpera'] ) {
+						this.selection_field.innerHTML= "<pre>" + content.replace(/^\r?\n/, "<br>") + "</pre>";
+					} else {
+						this.selection_field.innerHTML= content;
+					}
+
+					
 					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
 						this.maj_highlight(infos);
 				}		
@@ -71,17 +73,17 @@
 					no_real_move=false;					
 					//findEndBracket(infos["line_start"], infos["curr_pos"], selec_char);
 					if(this.findEndBracket(infos, selec_char) === true){
-						$("end_bracket").style.visibility="visible";
-						$("cursor_pos").style.visibility="visible";
-						$("cursor_pos").innerHTML= selec_char;
-						$("end_bracket").innerHTML= (this.assocBracket[selec_char] || this.revertAssocBracket[selec_char]);
+						_$("end_bracket").style.visibility="visible";
+						_$("cursor_pos").style.visibility="visible";
+						_$("cursor_pos").innerHTML= selec_char;
+						_$("end_bracket").innerHTML= (this.assocBracket[selec_char] || this.revertAssocBracket[selec_char]);
 					}else{
-						$("end_bracket").style.visibility="hidden";
-						$("cursor_pos").style.visibility="hidden";
+						_$("end_bracket").style.visibility="hidden";
+						_$("cursor_pos").style.visibility="hidden";
 					}
 				}else{
-					$("cursor_pos").style.visibility="hidden";
-					$("end_bracket").style.visibility="hidden";
+					_$("cursor_pos").style.visibility="hidden";
+					_$("end_bracket").style.visibility="hidden";
 				}
 				//alert("move cursor");
 				this.displayToCursorPosition("cursor_pos", infos["line_start"], infos["curr_pos"]-1, infos["curr_line"], no_real_move);
@@ -163,10 +165,10 @@
 			selections["selec_direction"]= "up";
 		}
 			
-		$("nbLine").innerHTML= nbLine;		
-		$("nbChar").innerHTML= nbChar;		
-		$("linePos").innerHTML=selections["line_start"];
-		$("currPos").innerHTML=selections["curr_pos"];
+		_$("nbLine").innerHTML= nbLine;		
+		_$("nbChar").innerHTML= nbChar;		
+		_$("linePos").innerHTML=selections["line_start"];
+		_$("currPos").innerHTML=selections["curr_pos"];
 		
 		return selections;		
 	};
@@ -408,16 +410,16 @@
 	};
 	
 	EditArea.prototype.displayToCursorPosition= function(id, start_line, cur_pos, lineContent, no_real_move){
-		var elem= $("test_font_size");
-		var dest= $(id);
+		var elem= _$("test_font_size");
+		var dest= _$(id);
 		var postLeft=0;
 		elem.innerHTML="<pre><span id='test_font_size_inner'>"+lineContent.substr(0, cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span></pre>";
-		posLeft= 45 + $('test_font_size_inner').offsetWidth;
+		posLeft= 45 + _$('test_font_size_inner').offsetWidth;
 		
 
 		var posTop=this.lineHeight * (start_line-1);
 		
-		if( this.nav['isIE'] >= 8 )
+		if( this.nav['isIE'] >= 8 || this.nav['isSafari'] >= 4 )
 			posTop--;
 	
 		if(no_real_move!=true){	// when the cursor is hidden no need to move him
@@ -428,7 +430,7 @@
 		dest.cursor_top=posTop;
 		dest.cursor_left=posLeft;
 		
-	//	$(id).style.marginLeft=posLeft+"px";
+	//	_$(id).style.marginLeft=posLeft+"px";
 		
 	};
 	

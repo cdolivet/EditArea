@@ -16,6 +16,9 @@
 		this.line_number=0;
 		
 		this.nav=parent.editAreaLoader.nav; 	// navigator identification
+		// fix IE8 detection as we run in IE7 emulate mode through X-UA <meta> tag
+		if( this.nav['isIE'] >= 8 )
+			this.nav['isIE']	= 7;
 		
 		this.last_selection=new Object();		
 		this.last_text_to_highlight="";
@@ -91,7 +94,7 @@
 	//called by the toggle_on
 	EditArea.prototype.update_size= function(){
 		
-		if(editAreas[editArea.id] && editAreas[editArea.id]["displayed"]==true){
+		if( typeof editAreas != 'undefined' && editAreas[editArea.id] && editAreas[editArea.id]["displayed"]==true){
 			if(editArea.fullscreen['isFull']){	
 				parent.document.getElementById("frame_"+editArea.id).style.width= parent.document.getElementsByTagName("html")[0].clientWidth + "px";
 				parent.document.getElementById("frame_"+editArea.id).style.height= parent.document.getElementsByTagName("html")[0].clientHeight + "px";
@@ -112,7 +115,7 @@
 			
 			// check that the popups don't get out of the screen
 			for(var i=0; i<editArea.inlinePopup.length; i++){
-				var popup= $(editArea.inlinePopup[i]["popup_id"]);
+				var popup= _$(editArea.inlinePopup[i]["popup_id"]);
 				var max_left= document.body.offsetWidth- popup.offsetWidth;
 				var max_top= document.body.offsetHeight- popup.offsetHeight;
 				if(popup.offsetTop>max_top)
@@ -124,21 +127,21 @@
 	};
 
 	EditArea.prototype.init= function(){
-		this.textarea= $("textarea");
-		this.container= $("container");
-		this.result= $("result");
-		this.content_highlight= $("content_highlight");
-		this.selection_field= $("selection_field");
-		this.processing_screen= $("processing");
-		this.editor_area= $("editor");
-		this.tab_browsing_area= $("tab_browsing_area");
+		this.textarea= _$("textarea");
+		this.container= _$("container");
+		this.result= _$("result");
+		this.content_highlight= _$("content_highlight");
+		this.selection_field= _$("selection_field");
+		this.processing_screen= _$("processing");
+		this.editor_area= _$("editor");
+		this.tab_browsing_area= _$("tab_browsing_area");
 		
 		if(!this.settings['is_editable'])
 			this.set_editable(false);
 		
 		this.set_show_line_colors( this.settings['show_line_colors'] );
 		
-		if(syntax_selec= $("syntax_selection"))
+		if(syntax_selec= _$("syntax_selection"))
 		{
 			// set up syntax selection lsit in the toolbar
 			for(var i=0; i<this.syntax_list.length; i++) {
@@ -153,7 +156,7 @@
 		}
 		
 		// add plugins buttons in the toolbar
-		spans= parent.getChildren($("toolbar_1"), "span", "", "", "all", -1);
+		spans= parent.getChildren(_$("toolbar_1"), "span", "", "", "all", -1);
 		
 		for(var i=0; i<spans.length; i++){
 		
@@ -184,8 +187,8 @@
 		// init size		
 		//this.update_size();
 		
-		if($("redo") != null)
-			this.switchClassSticky($("redo"), 'editAreaButtonDisabled', true);
+		if(_$("redo") != null)
+			this.switchClassSticky(_$("redo"), 'editAreaButtonDisabled', true);
 		
 		
 		// insert css rules for highlight mode		
@@ -198,15 +201,15 @@
 		}
 		// init key events
 		if(this.nav['isOpera'])
-			$("editor").onkeypress= keyDown;
+			_$("editor").onkeypress= keyDown;
 		else
-			$("editor").onkeydown= keyDown;
+			_$("editor").onkeydown= keyDown;
 
 		for(var i=0; i<this.inlinePopup.length; i++){
 			if(this.nav['isIE'] || this.nav['isFirefox'])
-				$(this.inlinePopup[i]["popup_id"]).onkeydown= keyDown;
+				_$(this.inlinePopup[i]["popup_id"]).onkeydown= keyDown;
 			else
-				$(this.inlinePopup[i]["popup_id"]).onkeypress= keyDown;
+				_$(this.inlinePopup[i]["popup_id"]).onkeypress= keyDown;
 		}
 		
 		if(this.settings["allow_resize"]=="both" || this.settings["allow_resize"]=="x" || this.settings["allow_resize"]=="y")
@@ -240,8 +243,10 @@
 		/** Browser specific style fixes **/
 		
 		// fix rendering bug for highlighted lines beginning with no tabs
-		if( this.nav['isFirefox'] >= '3' )
+		if( this.nav['isFirefox'] >= '3' ) {
 			this.content_highlight.style.borderLeft= "solid 1px transparent";
+			this.selection_field.style.borderLeft= "solid 1px transparent";
+		}
 		
 		if(this.nav['isIE'] && this.nav['isIE'] < 8 ){
 			this.textarea.style.marginTop= "-1px";
@@ -251,10 +256,11 @@
 			this.editor_area.style.position= "absolute";
 		}*/
 		
-		if(this.nav['isSafari'] ){
+		if( this.nav['isSafari'] ){
 			this.editor_area.style.position= "absolute";
 			this.textarea.style.marginLeft="-3px";
-			this.textarea.style.marginTop="1px";
+			if( this.nav['isSafari'] < 4 )
+				this.textarea.style.marginTop="1px";
 		}
 		
 		if( this.nav['isChrome'] ){
@@ -362,7 +368,7 @@
 				if(this.nav['isIE'])
 					span.unselectable=true;
 				span.innerHTML=div_line_number;         
-				$("line_number").appendChild(span);       
+				_$("line_number").appendChild(span);       
 			}
 		
 			//4) be sure the text is well displayed
@@ -377,11 +383,13 @@
 	};
 	
 	EditArea.prototype.add_event = function(obj, name, handler) {
-		if (this.nav['isIE']) {
-			obj.attachEvent("on" + name, handler);
-		} else{
-			obj.addEventListener(name, handler, false);
-		}
+		try{
+			if (this.nav['isIE']) {
+				obj.attachEvent("on" + name, handler);
+			} else{
+				obj.addEventListener(name, handler, false);
+			}
+		}catch(e){}
 	};
 	
 	EditArea.prototype.execCommand= function(cmd, param){
@@ -502,7 +510,7 @@
 	};
 	
 	// short cut for document.getElementById()
-	function $(id){return document.getElementById( id );};
+	function _$(id){return document.getElementById( id );};
 
 	var editArea = new EditArea();	
 	editArea.add_event(window, "load", init);
