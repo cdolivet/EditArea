@@ -132,6 +132,7 @@
 		this.result= _$("result");
 		this.content_highlight= _$("content_highlight");
 		this.selection_field= _$("selection_field");
+		this.selection_field_text= _$("selection_field_text");
 		this.processing_screen= _$("processing");
 		this.editor_area= _$("editor");
 		this.tab_browsing_area= _$("tab_browsing_area");
@@ -244,8 +245,9 @@
 		
 		// fix rendering bug for highlighted lines beginning with no tabs
 		if( this.nav['isFirefox'] >= '3' ) {
-			this.content_highlight.style.borderLeft= "solid 1px transparent";
-			this.selection_field.style.borderLeft= "solid 1px transparent";
+			this.content_highlight.style.paddingLeft= "1px";
+			this.selection_field.style.paddingLeft= "1px";
+			this.selection_field_text.style.paddingLeft= "1px";
 		}
 		
 		if(this.nav['isIE'] && this.nav['isIE'] < 8 ){
@@ -293,7 +295,13 @@
 		parent.editAreaLoader.add_event(window, "resize", editArea.update_size);
 		parent.editAreaLoader.add_event(parent.window, "resize", editArea.update_size);
 		parent.editAreaLoader.add_event(top.window, "resize", editArea.update_size);
-		parent.editAreaLoader.add_event(window, "unload", function(){if(editAreas[editArea.id] && editAreas[editArea.id]["displayed"]) editArea.execCommand("EA_unload");});
+		parent.editAreaLoader.add_event(window, "unload", function(){
+			parent.editAreaLoader.remove_event(parent.window, "resize", editArea.update_size);
+	  		parent.editAreaLoader.remove_event(top.window, "resize", editArea.update_size);
+			if(editAreas[editArea.id] && editAreas[editArea.id]["displayed"]){
+				editArea.execCommand("EA_unload");
+			}
+		});
 		
 		
 		/*date= new Date();
@@ -380,16 +388,6 @@
 		}
 		if(!onlyOneTime)
 			setTimeout("editArea.manage_size();", 100);
-	};
-	
-	EditArea.prototype.add_event = function(obj, name, handler) {
-		try{
-			if (this.nav['isIE']) {
-				obj.attachEvent("on" + name, handler);
-			} else{
-				obj.addEventListener(name, handler, false);
-			}
-		}catch(e){}
 	};
 	
 	EditArea.prototype.execCommand= function(cmd, param){
@@ -513,7 +511,7 @@
 	function _$(id){return document.getElementById( id );};
 
 	var editArea = new EditArea();	
-	editArea.add_event(window, "load", init);
+	parent.editAreaLoader.add_event(window, "load", init);
 	
 	function init(){		
 		setTimeout("editArea.init();  ", 10);

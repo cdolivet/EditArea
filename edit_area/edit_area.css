@@ -68,7 +68,7 @@ body, html, table, form, textarea{
 }
 
 
-#selection_field{
+#selection_field, #selection_field_text{
 	margin: 0; 
 	background-color: #E1F2F9; 
 	height: 1px;  
@@ -80,10 +80,21 @@ body, html, table, form, textarea{
 	overflow: hidden;
 }
 
-#selection_field.show_colors{
+#selection_field.show_colors {
 	z-index: 3;
 	background-color:#EDF9FC;
 	color:transparent;
+}
+
+#selection_field_text{
+	background-color:transparent;
+	color:transparent;
+}
+
+#selection_field_text strong{
+	font-weight:normal;
+	background-color:#3399FE;
+	color: #FFF;
 }
 
 #container.wrap_text #content_highlight, #container.wrap_text #selection_field{

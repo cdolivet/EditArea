@@ -21,16 +21,15 @@
 		//	t2= time.getTime();
 			
 			//if(this.last_selection["line_start"] != infos["line_start"] || this.last_selection["line_nb"] != infos["line_nb"] || infos["full_text"] != this.last_selection["full_text"]){
-			if(this.last_selection["line_start"] != infos["line_start"] || this.last_selection["line_nb"] != infos["line_nb"] || infos["full_text"] != this.last_selection["full_text"] || this.reload_highlight){
+			if(this.last_selection["line_start"] != infos["line_start"] || this.last_selection["line_nb"] != infos["line_nb"] || infos["full_text"] != this.last_selection["full_text"] || this.reload_highlight || this.last_selection["selectionStart"] != infos["selectionStart"] || this.last_selection["selectionEnd"] != infos["selectionEnd"] ){
 			// if selection change
-				
 				new_top=this.lineHeight * (infos["line_start"]-1);
 				new_height=Math.max(0, this.lineHeight * infos["line_nb"]);
 				new_width=Math.max(this.textarea.scrollWidth, this.container.clientWidth -50);
 				
-				this.selection_field.style.top=new_top+"px";	
-				this.selection_field.style.width=new_width+"px";
-				this.selection_field.style.height=new_height+"px";	
+				this.selection_field.style.top=this.selection_field_text.style.top=new_top+"px";	
+				this.selection_field.style.width=this.selection_field_text.style.width=new_width+"px";
+				this.selection_field.style.height=this.selection_field_text.style.height=new_height+"px";	
 				_$("cursor_pos").style.top=new_top+"px";	
 		
 				if(this.do_highlight==true){
@@ -45,17 +44,19 @@
 						content+= curr_text[i]+"\n";	
 					}
 					
-					content= content.replace(/&/g,"&amp;");
-					content= content.replace(/</g,"&lt;");
-					content= content.replace(/>/g,"&gt;");
+					// add special chars arround selected characters
+					selLength = infos['selectionEnd'] - infos['selectionStart'];
+					content= content.substr( 0, infos["curr_pos"] - 1 ) + "\r\r" + content.substr( infos["curr_pos"] - 1, selLength ) + "\r\r" + content.substr( infos["curr_pos"] - 1 + selLength );
+					
+					content= content.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace("\r\r", '<strong>').replace("\r\r", '</strong>');
 					
 					if( this.nav['isIE'] || this.nav['isOpera'] ) {
 						this.selection_field.innerHTML= "<pre>" + content.replace(/^\r?\n/, "<br>") + "</pre>";
 					} else {
 						this.selection_field.innerHTML= content;
 					}
+					this.selection_field_text.innerHTML = this.selection_field.innerHTML;
 
-					
 					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
 						this.maj_highlight(infos);
 				}		
@@ -106,8 +107,8 @@
 	EditArea.prototype.get_selection_infos= function(){
 		if(this.nav['isIE'])
 			this.getIESelection();
-		start=this.textarea.selectionStart;
-		end=this.textarea.selectionEnd;		
+		var start=this.textarea.selectionStart;
+		var end=this.textarea.selectionEnd;		
 		
 		if(this.last_selection["selectionStart"]==start && this.last_selection["selectionEnd"]==end && this.last_selection["full_text"]==this.textarea.value)
 			return this.last_selection;
@@ -119,6 +120,7 @@
 			start=end= start+(this.textarea.value.length-len);
 			this.area_select(start, 0);
 		}
+		
 		var selections=new Object();
 		selections["selectionStart"]= start;
 		selections["selectionEnd"]= end;		
@@ -131,7 +133,6 @@
 		selections["selec_direction"]= this.last_selection["selec_direction"];
 		
 		//return selections;	
-		
 		var splitTab=selections["full_text"].split("\n");
 		var nbLine=Math.max(0, splitTab.length);		
 		var nbChar=Math.max(0, selections["full_text"].length - (nbLine - 1));	// (remove \n caracters from the count)
@@ -149,9 +150,8 @@
 		if(end>start){
 			selections["line_nb"]=selections["full_text"].substring(start,end).split("\n").length;
 		}
-		selections["indexOfCursor"]=this.textarea.selectionStart;		
+		selections["indexOfCursor"]=start;		
 		selections["curr_line"]=splitTab[Math.max(0,selections["line_start"]-1)];
-		
 		
 		// determine in with direction the direction grow
 		if(selections["selectionStart"]==this.last_selection["selectionStart"]){

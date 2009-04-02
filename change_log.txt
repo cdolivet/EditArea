@@ -1,11 +1,12 @@
 **** v 0.7.4 ****
+- We can now clearly see the selected text
 - Add Internet explorer 8 support (but sadly I must use IE7 emulate mode in iframe due to a bug with tabulation width not beeing resized in IE's textarea) 
 - Add Safari 4 support
 - Add Chrome 2 support
 - Add Simplified Chinese translation "zh" (thanks to Abentian)
 - Add Bulgariane translation "bg" (thanks to Valentin Hristov)
 - Rename internal function $() by _$()
-- Bug fix: EditArea.update_size sometimes uses undefined variable
+- Bug fix: EditArea.update_size sometimes uses undefined variable (fix this possibility and cleanup events)
 - Bug fix: Template.html was not valid XHTML
 - Bug fix: The checked attribute of the toogle button was not defined in xhtml syntax
 - Bug fix: If the editArea was loaded on a page related to a domain which was itself an iframe comming from another domain a JS error was thrown on load 

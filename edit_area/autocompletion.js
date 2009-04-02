@@ -74,8 +74,8 @@ var EditArea_autocompletion= {
 		editArea.container.insertBefore( this.container, editArea.container.firstChild );
 		
 		// add event detection for hiding suggestion box
-		editArea.add_event( document, "click", function(){ editArea.plugins['autocompletion']._hide();} );
-		editArea.add_event( editArea.textarea, "blur", function(){ editArea.plugins['autocompletion']._hide();} );
+		parent.editAreaLoader.add_event( document, "click", function(){ editArea.plugins['autocompletion']._hide();} );
+		parent.editAreaLoader.add_event( editArea.textarea, "blur", function(){ editArea.plugins['autocompletion']._hide();} );
 		
 	}
 	

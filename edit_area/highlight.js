@@ -29,6 +29,7 @@
 	
 	EditArea.prototype.disable_highlight= function(displayOnly){		
 		this.selection_field.innerHTML="";
+		this.selection_field_text.innerHTML="";
 		this.content_highlight.style.visibility="hidden";
 		// replacing the node is far more faster than deleting it's content in firefox
 		var new_Obj= this.content_highlight.cloneNode(false);
@@ -102,7 +103,16 @@
 	EditArea.prototype.maj_highlight= function(infos){
 		if(this.last_highlight_base_text==infos["full_text"] && this.resync_highlight!==true)
 			return;
-					
+		
+		if( this.settings['wrap_text'] ){
+			var t	= this.textarea.cloneNode(true);
+			t.wrap= 'hard';
+			t.setAttribute('wrap', 'hard');
+			t.value = infos["full_text"];
+			t.width	= '200px';
+			this.textarea.parentNode.appendChild( t );
+			this.textarea.parentNode.removeChild( t );
+		}			
 		//var infos= this.getSelectionInfos();
 		if(infos["full_text"].indexOf("\r")!=-1)
 			text_to_highlight= infos["full_text"].replace(/\r/g, "");
@@ -237,48 +247,16 @@
 		inner1=date.getTime();		
 					
 		// update the content of the highlight div by first updating a clone node (as there is no display in the same time for this node it's quite faster (5*))
-		
-		/*var a_spans				= this.content_highlight.getElementsByTagName('span');
-		if( a_spans.length > 0 )
-		{
-			var rootSpan	= a_spans[0];
-			a_spans			= rootSpan.getElementsByTagName('span');
-			tmp	= stay_begin.match(/<span/g);
-			var nbBeforeSpan		= tmp === null ? 0 : tmp.length;
-			tmp	= stay_end.match(/<span/g);
-			var nbAfterSpan			= tmp === null ? 0 : tmp.length;
-			
-			lastStartNode	= nbBeforeSpan > 0 ? a_spans[nbBeforeSpan-1] : rootSpan.firstChild;
-			firstEndNode	= nbAfterSpan > 0 ? a_spans[a_spans.length-nbAfterSpan] : null;
-			while( lastStartNode.parentNode != rootSpan ){
-			 	lastStartNode	= lastStartNode.parentNode;
-			}
-			nextNode		= lastStartNode.nextSibling;
-			while( nextNode && nextNode != firstEndNode )
-			{
-				tmp			= nextNode;
-				nextNode	= nextNode.nextSibling;
-				tmp.parentNode.removeChild( tmp );
-			}
-			var tmpNode 	= document.createElement( 'div' );
-			tmpNode.innerHTML	= updated_highlight;
-			while( tmpNode.childNodes.length > 0 ){
-				lastStartNode.parentNode.insertBefore( tmpNode.firstChild, lastStartNode.nextSibling );
-				lastStartNode	= lastStartNode.nextSibling;
-			}
-		}
-		else*/
-		{
-			var new_Obj= this.content_highlight.cloneNode(false);
-			if( ( this.nav['isIE'] && this.nav['isIE'] < 8 ) || this.nav['isOpera'] )
-				new_Obj.innerHTML= "<pre><span class='"+ this.settings["syntax"] +"'>" + hightlighted_text + "</span></pre>";	
-			else
-				new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";
+		var new_Obj= this.content_highlight.cloneNode(false);
+		if( ( this.nav['isIE'] && this.nav['isIE'] < 8 ) || this.nav['isOpera'] )
+			new_Obj.innerHTML= "<pre><span class='"+ this.settings["syntax"] +"'>" + hightlighted_text + "</span></pre>";	
+		else
+			new_Obj.innerHTML= "<span class='"+ this.settings["syntax"] +"'>"+ hightlighted_text +"</span>";
+
+		this.content_highlight.parentNode.replaceChild(new_Obj, this.content_highlight);
 	
-			this.content_highlight.parentNode.replaceChild(new_Obj, this.content_highlight);
+		this.content_highlight= new_Obj;
 		
-			this.content_highlight= new_Obj;
-		}
 		if(infos["full_text"].indexOf("\r")!=-1)
 			this.last_text_to_highlight= infos["full_text"].replace(/\r/g, "");
 		else

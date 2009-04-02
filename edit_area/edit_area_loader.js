@@ -471,8 +471,7 @@ EditAreaLoader.prototype ={
 				frame.editArea.toggle_full_screen(false);
 			editAreas[id]["displayed"]=false;
 			
-			// set wrap to off to keep same display mode (some browser get problem with this, so it need more complex operation
-			
+			// set wrap to off to keep same display mode (some browser get problem with this, so it need more complex operation		
 			editAreas[id]["textarea"].wrap = "off";	// for IE
 			setAttribute(editAreas[id]["textarea"], "wrap", "off");	// for Firefox	
 			var parNod = editAreas[id]["textarea"].parentNode;
@@ -756,10 +755,12 @@ EditAreaLoader.prototype ={
 	},
 	
 	remove_event : function(obj, name, handler){
-		if (obj.detachEvent)
-			obj.detachEvent("on" + name, handler);
-		else
-			obj.removeEventListener(name, handler, false);
+		try{
+			if (obj.detachEvent)
+				obj.detachEvent("on" + name, handler);
+			else
+				obj.removeEventListener(name, handler, false);
+		}catch(e){}
 	},
 
 

@@ -42,7 +42,7 @@
 	};
 	
 	EditArea.prototype.set_font= function(family, size){
-		var elems= new Array("textarea", "content_highlight", "cursor_pos", "end_bracket", "selection_field", "line_number");
+		var elems= new Array("textarea", "content_highlight", "cursor_pos", "end_bracket", "selection_field", "selection_field_text", "line_number");
 		if(family && family!="")
 			this.settings["font_family"]= family;
 		if(size && size>0)
@@ -721,12 +721,12 @@
 		if( this.settings['wrap_text'] )
 		{
 			wrap_mode = 'soft';
-			this.container.className+= ' wrap_text';
+			//this.container.className+= ' wrap_text';
 		}
 		else
 		{
 			wrap_mode = 'off';
-			this.container.className= this.container.className.replace(/ wrap_text/g, '');
+			//this.container.className= this.container.className.replace(/ wrap_text/g, '');
 		}
 		
 		
