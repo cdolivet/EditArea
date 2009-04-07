@@ -140,7 +140,7 @@ var EditArea_autocompletion= {
 		// show current suggestion list and do autoSelect if possible (no matter it's shown or hidden)
 		if( letter=="Space" && CtrlPressed(e) )
 		{
-			parent.console.log('SHOW SUGGEST');
+			//parent.console.log('SHOW SUGGEST');
 			this.forceDisplay 			= true;
 			this.autoSelectIfOneResult	= true;
 			this._checkLetter();
@@ -251,7 +251,7 @@ var EditArea_autocompletion= {
 	{
 		cursor_forced_position	= content.indexOf( '{@}' );
 		content	= content.replace(/{@}/g, '' );
-		if(editArea.nav['isIE'])
+		if(editArea.isIE)
 			editArea.getIESelection();
 		
 		// retrive the number of matching characters
@@ -308,7 +308,7 @@ var EditArea_autocompletion= {
 						tmp["match_word"]= new RegExp("(?:"+ datas["REGEXP"]["before_word"] +")("+ datas["REGEXP"]["possible_words_letters"] +")$", tmp["modifiers"]);
 						tmp["match_next_letter"]= new RegExp("^("+ datas["REGEXP"]["letter_after_word_must_match"] +")$", tmp["modifiers"]);
 						tmp["keywords"]= {};
-						console.log( datas["KEYWORDS"] );
+						//console.log( datas["KEYWORDS"] );
 						for( var prefix in datas["KEYWORDS"] )
 						{
 							tmp["keywords"][prefix]= {
@@ -352,19 +352,19 @@ var EditArea_autocompletion= {
 				this._parseSyntaxAutoCompletionDatas();
 			this.curr_syntax= parent.editAreaLoader.syntax[editArea.settings['syntax']]['autocompletion'];
 			this.curr_syntax_str = editArea.settings['syntax'];
-			console.log( this.curr_syntax );
+			//console.log( this.curr_syntax );
 		}
 		
 		if( editArea.is_editable )
 		{
 			time=new Date;
 			t1= time.getTime();
-			if(editArea.nav['isIE'])
+			if(editArea.isIE)
 				editArea.getIESelection();
 			this.selectIndex	= -1;
 			start=editArea.textarea.selectionStart;
 			var str	= editArea.textarea.value;
-			var results= new Array();
+			var results= [];
 			
 			
 			for(var i in this.curr_syntax)
@@ -385,7 +385,7 @@ var EditArea_autocompletion= {
 					{
 						var begin_word= match_word[1];
 						var match_curr_word= new RegExp("^"+ parent.editAreaLoader.get_escaped_regexp( begin_word ), this.curr_syntax[i]["modifiers"]);
-						console.log( match_curr_word );
+						//console.log( match_curr_word );
 						for(var prefix in this.curr_syntax[i]["keywords"])
 						{
 						//	parent.console.log( this.curr_syntax[i]["keywords"][prefix] );
@@ -451,7 +451,7 @@ var EditArea_autocompletion= {
 			// there is only one result, and we can select it automatically
 			if( results.length == 1 && this.autoSelectIfOneResult )
 			{
-				console.log( results );
+			//	console.log( results );
 				this._select( results[0][1]['replace_with'] );
 			}
 			else if( results.length == 0 )

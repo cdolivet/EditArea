@@ -30,7 +30,7 @@
 				new_top		= this.getLinePosTop( infos["line_start"] );
 				new_width	= Math.max(this.textarea.scrollWidth, this.container.clientWidth -50);
 				this.selection_field.style.top=this.selection_field_text.style.top=new_top+"px";
-				if(!this.settings['word_wrap']){	
+				if(!this.settings['wrap_text']){	
 					this.selection_field.style.width=this.selection_field_text.style.width=this.test_font_size.style.width=new_width+"px";
 				}
 				
@@ -55,7 +55,7 @@
 					content		= content.substr( 0, infos["curr_pos"] - 1 ) + "\r\r" + content.substr( infos["curr_pos"] - 1, selLength ) + "\r\r" + content.substr( infos["curr_pos"] - 1 + selLength );
 					content		= '<span>'+ content.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace("\r\r", '</span><strong>').replace("\r\r", '</strong><span>') +'</span>';
 					
-					if( this.isIE || ( this.isOpera && this.isOpera < 9.6 ) ) {
+					if( this.isIE || this.isOpera ) {
 						this.selection_field.innerHTML= "<pre>" + content.replace(/^\r?\n/, "<br>") + "</pre>";
 					} else {
 						this.selection_field.innerHTML= content;
@@ -65,17 +65,16 @@
 					// check if we need to update the highlighted background
 					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
 					{
-						this.maj_highlight(infos);
+						this.maj_highlight(infos, changes);
 					}
 				}		
 			}
 			t3= new Date().getTime();
 			
 			// manage line heights
-			if( this.settings['word_wrap'] && infos["full_text"] != this.last_selection["full_text"])
+			if( this.settings['wrap_text'] && infos["full_text"] != this.last_selection["full_text"])
 			{
-				//this.fixLinesHeight(changes.lineStart,changes.lineNewEnd);
-				this.fixLinesHeight(changes.lineStart, -1);
+				this.fixLinesHeight(changes.lineStart,changes.lineNewEnd);
 			}
 			
 			// manage bracket finding
@@ -109,9 +108,8 @@
 		}
 		
 		tend= new Date().getTime();
-		/*if( (tend-t1) > 30 )
+		if( (tend-t1) > 30 )
 			this.debug.value="tps total: "+ (tend-t1) + " tps get_infos: "+ (t2-t1)+ " tps selec: "+ (t2_1-t2)+ " tps highlight: "+ (t3-t2_1) +" tps cursor+lines: "+ (tend-t3)+" \n"+this.debug.value;
-		*/
 		
 		if(timer_checkup){
 			//if(this.do_highlight==true)	//can slow down check speed when highlight mode is on
@@ -190,42 +188,98 @@
 	};
 	
 	// set IE position in Firefox mode (textarea.selectionStart and textarea.selectionEnd)
-	EditArea.prototype.getIESelection= function(){
-		var selectionStart, selectionEnd, range, stored_range;
-		
-		// make it work as nowrap mode (easier for range manipulation with lineHeight)
-		if( this.settings['word_wrap'] )
-			this.textarea.wrap='off';
-			
+	EditArea.prototype.getIESelection= function(){	
 		try{
-			range			= document.selection.createRange();
-			stored_range	= range.duplicate();
+			var range = document.selection.createRange();
+			var stored_range = range.duplicate();
 			stored_range.moveToElementText( this.textarea );
 			stored_range.setEndPoint( 'EndToEnd', range );
-			if( stored_range.parentElement() != this.textarea )
-				throw "invalid focus";
-				
-			// the range don't take care of empty lines in the end of the selection
-			var scrollTop	= this.result.scrollTop + document.body.scrollTop;
-			var relative_top= range.offsetTop - parent.calculeOffsetTop(this.textarea) + scrollTop;
-			var line_start	= Math.round((relative_top / this.lineHeight) +1);
-			var line_nb		= Math.round( range.boundingHeight / this.lineHeight );
-						
-			selectionStart	= stored_range.text.length - range.text.length;		
-			selectionStart	+= ( line_start - this.textarea.value.substr(0, selectionStart).split("\n").length)*2;		// count missing empty \r to the selection
-			selectionStart	-= ( line_start - this.textarea.value.substr(0, selectionStart).split("\n").length ) * 2;
-			
-			selectionEnd	= selectionStart + range.text.length;		
-			selectionEnd	+= (line_start + line_nb - 1 - this.textarea.value.substr(0, selectionStart + range.text.length).split("\n").length)*2;			
+			if(stored_range.parentElement() !=this.textarea)
+				return;
 		
-			this.textarea.selectionStart	= selectionStart;
-			this.textarea.selectionEnd		= selectionEnd;
+			// the range don't take care of empty lines in the end of the selection
+			var scrollTop= this.result.scrollTop + document.body.scrollTop;
+			
+			var relative_top= range.offsetTop - parent.calculeOffsetTop(this.textarea) + scrollTop;
+			
+			var line_start = Math.round((relative_top / this.lineHeight) +1);
+			
+			var line_nb=Math.round(range.boundingHeight / this.lineHeight);
+						
+			var range_start=stored_range.text.length - range.text.length;
+			var tab=this.textarea.value.substr(0, range_start).split("\n");			
+			range_start+= (line_start - tab.length)*2;		// count missing empty \r to the selection
+			range_start-= ( line_start - this.textarea.value.substr(0, range_start).split("\n").length ) * 2;
+			
+			/** 
+			 * Check for trimmed newlines by shrinking the range by 1 character and seeing if the text 
+			 * property has changed. If it has not changed then we know that IE has trimmed a \r\n from the end
+			 */
+			/*nbTrimed=0;
+			selection_text= stored_range.text;
+			selection_finished = false;
+			/*if( line_nb > 1 )
+			{
+				do {
+					if( stored_range.compareEndPoints("StartToEnd", stored_range) == 0 )
+					{
+						selection_finished = true;
+					} else {
+						stored_range.moveStart("character", 1);
+						if( stored_range.text == selection_text ) {
+							nbTrimed++;
+						} else {
+							selection_finished = true;
+						}
+					}
+				}while( !selection_finished );
+			}
+			stored_range.moveToElementText( this.textarea );
+			stored_range.setEndPoint( 'EndToEnd', range );*/
+			
+			this.textarea.selectionStart = range_start;
+			var range_end=this.textarea.selectionStart + range.text.length;
+			tab=this.textarea.value.substr(0, range_start + range.text.length).split("\n");			
+			range_end+= (line_start + line_nb - 1 - tab.length)*2;
+			
+			/** 
+			 * Check for trimmed newlines by shrinking the range by 1 character and seeing if the text 
+			 * property has changed. If it has not changed then we know that IE has trimmed a \r\n from the end
+			 */
+			nbTrimed=0;
+			selection_text= stored_range.text;
+			selection_finished = false;
+			if( line_nb > 1 )
+			{
+				do {
+					if( stored_range.compareEndPoints("StartToEnd", stored_range) == 0 )
+					{
+						selection_finished = true;
+					} else {
+						stored_range.moveEnd("character", -1);
+						if( stored_range.text == selection_text ) {
+							nbTrimed++;
+						} else {
+							selection_finished = true;
+						}
+					}
+				}while( !selection_finished );
+			}
+			//this.debug.value= nbTrimed+','+line_nb;
+			//range_end= this.textarea.selectionStart + range.text.length + (line_start + line_nb - 1 - tab.length )*2 - ( line_nb - range.text.split("\n").length + nbTrimed ) * 2;
+			range_end= this.textarea.selectionStart + range.text.length + ( nbTrimed * 2);
+			
+			
+			/*
+			tab=this.textarea.value.substr(0, range_start + range.text.length).split("\n");			
+			range_end+= (line_start + line_nb - 1 - tab.length)*2;
+			*/
+		
+			this.textarea.selectionEnd = range_end;
 		}
 		catch(e){}
-		
-		// restore wrap mode
-		if( this.settings['word_wrap'] )
-			this.textarea.wrap='soft';
+		/*this.textarea.selectionStart = 10;
+		this.textarea.selectionEnd = 50;*/
 	};
 	
 	// select the text for IE (and take care of \r caracters)
@@ -293,7 +347,7 @@
 		
 		ch.newTextLine	= newText.split("\n").slice(ch.lineStart, ch.lineNewEnd+1).join("\n");
 		ch.lastTextLine	= lastText.split("\n").slice(ch.lineStart, ch.lineLastEnd+1).join("\n");
-		//console.log( ch );
+		
 		return ch;	
 	};
 	
@@ -420,13 +474,10 @@
 		var end= this.textarea.selectionEnd;
 		var start_last_line= Math.max(0 , this.textarea.value.substring(0, start).lastIndexOf("\n") + 1 );
 		var begin_line= this.textarea.value.substring(start_last_line, start).replace(/^([ \t]*).*/gm, "$1");
-		var lineStart = this.textarea.value.substring(0, start).split("\n").length;
 		if(begin_line=="\n" || begin_line=="\r" || begin_line.length==0)
-		{
 			return false;
-		}
 			
-		if(this.isIE || ( this.isOpera && this.isOpera < 9.6 ) ){
+		if(this.isIE || this.isOpera){
 			begin_line="\r\n"+ begin_line;
 		}else{
 			begin_line="\n"+ begin_line;
@@ -495,7 +546,7 @@
 		elem		= this.test_font_size;
 		dest		= _$(id);
 		content		= "<span id='test_font_size_inner'>"+lineContent.substr(0, cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span><span id='endTestFont'>"+lineContent.substr(cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span>";
-		if( this.isIE || ( this.isOpera && this.isOpera < 9.6 ) ) {
+		if( this.isIE || this.isOpera ) {
 			elem.innerHTML= "<pre>" + content.replace(/^\r?\n/, "<br>") + "</pre>";
 		} else {
 			elem.innerHTML= content;
@@ -508,11 +559,6 @@
 		fixPadding	= parseInt( this.content_highlight.style.paddingLeft.replace("px", "") );
 		posLeft 	= 45 + endElem.offsetLeft + ( !isNaN( fixPadding ) && topOffset > 0 ? fixPadding : 0 );
 		posTop		= this.getLinePosTop( start_line ) + topOffset;// + Math.floor( ( endElem.offsetHeight - 1 ) / this.lineHeight ) * this.lineHeight;
-		// detect the case where the span start on a line but has no display on it
-		if( this.isIE && cur_pos > 0 && endElem.offsetLeft == 0 )
-		{
-			posTop	+=	this.lineHeight;
-		}
 		if(no_real_move!=true){	// when the cursor is hidden no need to move him
 			dest.style.top=posTop+"px";
 			dest.style.left=posLeft+"px";		
@@ -540,7 +586,7 @@
 		var t=this,elem,height;
 		elem		= t.test_font_size;
 		content		= text.replace(/&/g,"&amp;").replace(/</g,"&lt;");
-		if( t.isIE || ( this.isOpera && this.isOpera < 9.6 ) ) {
+		if( t.isIE || t.isOpera ) {
 			elem.innerHTML= "<pre>" + content.replace(/^\r?\n/, "<br>") + "</pre>";
 		} else {
 			elem.innerHTML= content;
@@ -550,20 +596,15 @@
 		return height;
 	};
 
-	/**
-	 * Fix line height for the given lines
-	 * @param Integer linestart
-	 * @param Integer lineEnd End line or -1 to cover all lines
-	 */
 	EditArea.prototype.fixLinesHeight= function( lineStart,lineEnd ){
 		var aText = this.textarea.value.split("\n");
 		if( lineEnd == -1 )
 			lineEnd	= aText.length-1;
-		for( var i = Math.max(0, lineStart); i <= lineEnd; i++ )
+		for( var i = lineStart; i <= lineEnd; i++ )
 		{
-			if( elem = _$('line_'+ ( i+1 ) ) )
+			if( elem = _$('line_'+ (i+1)) )
 			{
-				elem.style.height= typeof( aText[i] ) != "undefined" ? this.getTextHeight( aText[i] )+"px" : this.lineHeight;
+				elem.style.height= aText[i-1] ? this.getTextHeight( aText[i] )+"px" : this.lineHeight;
 			}
 		}
 	};
@@ -579,7 +620,15 @@
 			this.textarea.selectionEnd = end;		
 			this.setIESelection();
 		}else{
-			if(this.isOpera && this.isOpera < 9.6 ){	// Opera bug when moving selection start and selection end
+			if(this.isOpera){	// Opera bug when moving selection start and selection end
+				/*this.textarea.selectionEnd = 1;	
+				this.textarea.selectionStart = 0;			
+				this.textarea.selectionEnd = 1;	
+				this.textarea.selectionStart = 0;
+				this.textarea.selectionEnd = 0;	
+				this.textarea.selectionStart = 0;
+				this.textarea.selectionEnd = 0;	
+				this.textarea.selectionStart = 0;*/
 				this.textarea.setSelectionRange(0, 0);
 			}
 			this.textarea.setSelectionRange(start, end);

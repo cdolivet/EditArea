@@ -12,7 +12,7 @@
 	EditArea.prototype.show_waiting_screen= function(){
 		width= this.editor_area.offsetWidth;
 		height= this.editor_area.offsetHeight;
-		if(this.nav['isGecko'] || this.nav['isOpera'] || this.nav['isIE']>=7){
+		if( !(this.isIE && this.isIE<6) ){
 			width-=2;
 			height-=2;
 		}
@@ -42,60 +42,58 @@
 	};
 	
 	EditArea.prototype.set_font= function(family, size){
-		var elems= new Array("textarea", "content_highlight", "cursor_pos", "end_bracket", "selection_field", "selection_field_text", "line_number");
+		var t=this, a=this.textarea, s=this.settings, elem_font, i;
+		// list all elements concerned by font changes
+		var elems= ["textarea", "content_highlight", "cursor_pos", "end_bracket", "selection_field", "selection_field_text", "line_number"];
+		
 		if(family && family!="")
-			this.settings["font_family"]= family;
+			s["font_family"]= family;
 		if(size && size>0)
-			this.settings["font_size"]=size;
-		if(this.nav['isOpera'])	// opera can't manage non monospace font
-			this.settings['font_family']="monospace";
-		var elem_font=_$("area_font_size");	
-		if(elem_font){	
-			for(var i=0; i<elem_font.length; i++){
-				if(elem_font.options[i].value && elem_font.options[i].value == this.settings["font_size"])
-						elem_font.options[i].selected=true;
+			s["font_size"]=size;
+		if( t.isOpera && t.isOpera < 9.6 )	// opera<9.6 can't manage non monospace font
+			s['font_family']="monospace";
+			
+		// update the select tag
+		if( elem_font = _$("area_font_size") )
+		{	
+			for( i = 0; i < elem_font.length; i++ )
+			{
+				if( elem_font.options[i].value && elem_font.options[i].value == s["font_size"] )
+					elem_font.options[i].selected=true;
 			}
 		}
 		
 		// calc line height
-		elem	= _$("test_font_size");
-		elem.style.fontFamily= ""+this.settings["font_family"];
-		elem.style.fontSize= this.settings["font_size"]+"pt";				
+		elem	= t.test_font_size;
+		elem.style.fontFamily= ""+s["font_family"];
+		elem.style.fontSize= s["font_size"]+"pt";				
 		elem.innerHTML="0";		
-		this.lineHeight= elem.offsetHeight;
+		t.lineHeight= elem.offsetHeight;
 
-		
+		// update font for all concerned elements
 		for(var i=0; i<elems.length; i++){
 			var elem= _$(elems[i]);	
-			elem.style.fontFamily= this.settings["font_family"];
-			elem.style.fontSize= this.settings["font_size"]+"pt";
-			elem.style.lineHeight= this.lineHeight+"px";
+			elem.style.fontFamily= s["font_family"];
+			elem.style.fontSize= s["font_size"]+"pt";
+			elem.style.lineHeight= t.lineHeight+"px";
 
 		}
-		this.add_style("pre{font-family:"+this.settings["font_family"]+"}");
+		// define a css for <pre> tags
+		t.add_style("pre{font-family:"+s["font_family"]+"}");
 		
-		if(this.nav['isOpera'] || this.nav['isIE'] >= 8 ){	// opera and IE>=8 doesn't update font change to the textarea
-			var start=this.textarea.selectionStart;
-			var end= this.textarea.selectionEnd;
-			var parNod = this.textarea.parentNode, nxtSib = this.textarea.nextSibling;
-			parNod.removeChild(this.textarea); parNod.insertBefore(this.textarea, nxtSib);
-			this.area_select(start, end-start);
+		// old opera and IE>=8 doesn't update font changes to the textarea
+		if( ( t.isOpera && t.isOpera < 9.6 ) || t.isIE >= 8 )
+		{
+			var parNod = a.parentNode, nxtSib = a.nextSibling, start= a.selectionStart, end= a.selectionEnd;
+			parNod.removeChild(a);
+			parNod.insertBefore(a, nxtSib);
+			t.area_select(start, end-start);
 		}
 		
-
-		//alert("font "+this.textarea.style.font);
 		// force update of selection field
-		this.last_line_selected=-1;
-		//if(this.state=="loaded"){
-		this.last_selection= new Array();
-		this.resync_highlight();
-		//}
-	/*	this.last_selection["indexOfCursor"]=-1;
-		this.last_selection["curr_pos"]=-1;
-		this.last_selection["line_start"]=-1;
-		this.focus();*/
-		//this.check_line_selection(false);
-		//alert("line_h"+ this.lineHeight + " this.id: "+this.id+ "(size: "+size+")");
+		t.last_line_selected=-1;
+		t.last_selection= [];
+		t.resync_highlight();
 	};
 	
 	EditArea.prototype.change_font_size= function(){
@@ -258,17 +256,21 @@
 	// the auto scroll of the textarea has some lacks when it have to show cursor in the visible area when the textarea size change
 	// show specifiy whereas it is the "top" or "bottom" of the selection that is showned
 	EditArea.prototype.scroll_to_view= function(show){
+		var zone, lineElem;
 		if(!this.smooth_selection)
 			return;
-		var zone= _$("result");
+		zone= _$("result");
 		
-		//var cursor_pos_top= parseInt(_$("cursor_pos").style.top.replace("px",""));
+		// manage height scroll
 		var cursor_pos_top= _$("cursor_pos").cursor_top;
 		if(show=="bottom")
-			cursor_pos_top+= (this.last_selection["line_nb"]-1)* this.lineHeight;
+		{
+			//cursor_pos_top+=  (this.last_selection["line_nb"]-1)* this.lineHeight;
+			cursor_pos_top+= this.getLinePosTop( this.last_selection['line_start'] + this.last_selection['line_nb'] - 1 );
+		}
 			
 		var max_height_visible= zone.clientHeight + zone.scrollTop;
-		var miss_top= cursor_pos_top + this.lineHeight - max_height_visible;
+		var miss_top	= cursor_pos_top + this.lineHeight - max_height_visible;
 		if(miss_top>0){
 			//alert(miss_top);
 			zone.scrollTop=  zone.scrollTop + miss_top;
@@ -277,6 +279,8 @@
 			//alert("else: "+cursor_pos_top);
 			zone.scrollTop= cursor_pos_top;	 
 		}
+		
+		// manage left scroll
 		//var cursor_pos_left= parseInt(_$("cursor_pos").style.left.replace("px",""));
 		var cursor_pos_left= _$("cursor_pos").cursor_left;
 		var max_width_visible= zone.clientWidth + zone.scrollLeft;
@@ -316,7 +320,7 @@
 	EditArea.prototype.undo= function(){
 		//alert("undo"+this.previous.length);
 		if(this.previous.length > 0){
-			if(this.nav['isIE'])
+			if(this.isIE)
 				this.getIESelection();
 		//	var pos_cursor=this.textarea.selectionStart;
 			this.next.push({"text": this.textarea.value, "selStart": this.textarea.selectionStart, "selEnd": this.textarea.selectionEnd});
@@ -335,7 +339,7 @@
 	
 	EditArea.prototype.redo= function(){
 		if(this.next.length > 0){
-			/*if(this.nav['isIE'])
+			/*if(this.isIE)
 				this.getIESelection();*/
 			//var pos_cursor=this.textarea.selectionStart;
 			var next= this.next.pop();
@@ -353,7 +357,7 @@
 	
 	EditArea.prototype.check_redo= function(){
 		if(editArea.next.length == 0 || editArea.textarea.value!=editArea.last_undo){
-			editArea.next= new Array();	// undo the ability to use "redo" button
+			editArea.next= [];	// undo the ability to use "redo" button
 			editArea.switchClassSticky(_$("redo"), 'editAreaButtonDisabled', true);
 		}
 		else
@@ -412,20 +416,27 @@
 	
 	//make the "page up" and "page down" buttons works correctly
 	EditArea.prototype.scroll_page= function(params){
-		var dir= params["dir"];
-		var shift_pressed= params["shift"];
-		screen_height=_$("result").clientHeight;
+		var dir= params["dir"], shift_pressed= params["shift"];
 		var lines= this.textarea.value.split("\n");		
-		var new_pos=0;
-		var length=0;
-		var char_left=0;
-		var line_nb=0;
+		var new_pos=0, length=0, char_left=0, line_nb=0, curLine=0;
+		var toScrollAmount	= _$("result").clientHeight -30;
+		var nbLineToScroll	= 0, diff= 0;
+		
 		if(dir=="up"){
-			//val= Math.max(0, _$("result").scrollTop - screen_height);
-			//_$("result").scrollTop= val;
-			var scroll_line= Math.ceil((screen_height -30)/this.lineHeight);
+			nbLineToScroll	= Math.ceil( toScrollAmount / this.lineHeight );
+			
+			// fix number of line to scroll
+			for( i = this.last_selection["line_start"]; i - diff > this.last_selection["line_start"] - nbLineToScroll ; i-- )
+			{
+				if( elem = _$('line_'+ i) )
+				{
+					diff +=  Math.floor( ( elem.offsetHeight - 1 ) / this.lineHeight );
+				}
+			}
+			nbLineToScroll	-= diff;
+			
 			if(this.last_selection["selec_direction"]=="up"){
-				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]-scroll_line, lines.length); line_nb++){
+				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]-nbLineToScroll, lines.length); line_nb++){
 					new_pos+= lines[line_nb].length + 1;
 				}
 				char_left=Math.min(lines[Math.min(lines.length-1, line_nb)].length, this.last_selection["curr_pos"]-1);
@@ -435,7 +446,7 @@
 				view="top";
 			}else{			
 				view="bottom";
-				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+this.last_selection["line_nb"]-1-scroll_line, lines.length); line_nb++){
+				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+this.last_selection["line_nb"]-1-nbLineToScroll, lines.length); line_nb++){
 					new_pos+= lines[line_nb].length + 1;
 				}
 				char_left=Math.min(lines[Math.min(lines.length-1, line_nb)].length, this.last_selection["curr_pos"]-1);
@@ -450,13 +461,23 @@
 				this.area_select(start, length);
 				
 			}
-		}else{
-			//val= Math.max(_$("result").style.height.replace("px", ""), _$("result").scrollTop + screen_height);
-			//_$("result").scrollTop= val;
-			var scroll_line= Math.floor((screen_height-30)/this.lineHeight);				
+		}
+		else
+		{
+			var nbLineToScroll= Math.floor( toScrollAmount / this.lineHeight );
+			// fix number of line to scroll
+			for( i = this.last_selection["line_start"]; i + diff < this.last_selection["line_start"] + nbLineToScroll ; i++ )
+			{
+				if( elem = _$('line_'+ i) )
+				{
+					diff +=  Math.floor( ( elem.offsetHeight - 1 ) / this.lineHeight );
+				}
+			}
+			nbLineToScroll	-= diff;
+				
 			if(this.last_selection["selec_direction"]=="down"){
 				view="bottom";
-				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+this.last_selection["line_nb"]-2+scroll_line, lines.length); line_nb++){
+				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+this.last_selection["line_nb"]-2+nbLineToScroll, lines.length); line_nb++){
 					if(line_nb==this.last_selection["line_start"]-1)
 						char_left= this.last_selection["selectionStart"] -new_pos;
 					new_pos+= lines[line_nb].length + 1;
@@ -473,7 +494,7 @@
 				
 			}else{
 				view="top";
-				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+scroll_line-1, lines.length, lines.length); line_nb++){
+				for(line_nb=0; line_nb< Math.min(this.last_selection["line_start"]+nbLineToScroll-1, lines.length, lines.length); line_nb++){
 					if(line_nb==this.last_selection["line_start"]-1)
 						char_left= this.last_selection["selectionStart"] -new_pos;
 					new_pos+= lines[line_nb].length + 1;									
@@ -490,8 +511,8 @@
 				}
 				
 			}
-		}		
-		
+		}
+		console.log( new_pos, char_left, length, nbLineToScroll, toScrollAmount, _$("result").clientHeigh );
 		this.check_line_selection();
 		this.scroll_to_view(view);
 	};
@@ -500,7 +521,7 @@
 		parent.editAreaLoader.resize["id"]= editArea.id;		
 		parent.editAreaLoader.resize["start_x"]= (e)? e.pageX : event.x + document.body.scrollLeft;		
 		parent.editAreaLoader.resize["start_y"]= (e)? e.pageY : event.y + document.body.scrollTop;
-		if(editArea.nav['isIE']){
+		if(editArea.isIE){
 			editArea.textarea.focus();
 			editArea.getIESelection();
 		}
@@ -530,7 +551,7 @@
 			this.fullscreen['old_scrollTop']= html.scrollTop;
 			this.fullscreen['old_scrollLeft']= html.scrollLeft;
 			this.fullscreen['old_zIndex']= parent.get_css_property(frame, "z-index");
-			if(this.nav['isOpera']){
+			if(this.isOpera){
 				html.style.height= "100%";
 				html.style.width= "100%";	
 			}
@@ -568,7 +589,7 @@
 			
 		
 			// opera can't manage to do a direct size update
-			if(this.nav['isFirefox']){
+			if(this.isFirefox){
 				parent.editAreaLoader.execCommand(this.id, "update_size();");
 				this.area_select(selStart, selEnd-selStart);
 				this.scroll_to_view();
@@ -591,11 +612,11 @@
 			var html= parent.document.getElementsByTagName("html")[0];
 		//	html.style.overflow= this.fullscreen['old_overflow'];
 		
-			if(this.nav['isOpera']){
+			if(this.isOpera){
 				html.style.height= "auto"; 
 				html.style.width= "auto";
 				html.style.overflow= "auto";
-			}else if(this.nav['isIE'] && parent!=top){	// IE doesn't manage html overflow in frames like in normal page... 
+			}else if(this.isIE && parent!=top){	// IE doesn't manage html overflow in frames like in normal page... 
 				html.style.overflow= "auto";
 			}
 			else
@@ -609,7 +630,7 @@
 			this.switchClassSticky(icon, 'editAreaButtonNormal', false);
 			if(this.fullscreen['allow_resize'])
 				this.allow_resize(this.fullscreen['allow_resize']);
-			if(this.nav['isFirefox']){
+			if(this.isFirefox){
 				this.area_select(selStart, selEnd-selStart);
 				setTimeout("editArea.scroll_to_view();", 10);
 			}			
@@ -715,36 +736,48 @@
 	};
 	
 	/***** Wrap mode *****/
+	
+	// toggling function for set_wrap_mode
+	EditArea.prototype.toggle_word_wrap= function(){
+		this.set_word_wrap( !this.settings['word_wrap'] );
+	};
+	
+	
 	// open a new tab for the given file
-	EditArea.prototype.set_wrap_text= function(to){
-		this.settings['wrap_text']	= to;
-		if( this.settings['wrap_text'] )
+	EditArea.prototype.set_word_wrap= function(to){
+		var t=this, a= t.textarea;
+		if( to )
 		{
 			wrap_mode = 'soft';
-			//this.container.className+= ' wrap_text';
+			this.container.className+= ' word_wrap';
+			this.container.style.width="";
+			this.content_highlight.style.width="";
+			a.style.width="100%";
+			
+			t.switchClassSticky( _$("word_wrap"), 'editAreaButtonSelected', false );
 		}
 		else
 		{
 			wrap_mode = 'off';
-			//this.container.className= this.container.className.replace(/ wrap_text/g, '');
+			this.container.className	= this.container.className.replace(/word_wrap/g, '');
+			t.switchClassSticky( _$("word_wrap"), 'editAreaButtonNormal', true );
 		}
+		this.textarea.previous_scrollWidth = '';
+		this.textarea.previous_scrollHeight = '';
 		
-		
-		var t= this.textarea;
-		t.wrap= wrap_mode;
-		t.setAttribute('wrap', wrap_mode);
+		a.wrap= wrap_mode;
+		a.setAttribute('wrap', wrap_mode);
 		// seul IE supporte de changer à la volée le wrap mode du textarea
-		if(!this.nav['isIE']){
-			var start=t.selectionStart, end= t.selectionEnd;
-			var parNod = t.parentNode, nxtSib = t.nextSibling;
-			parNod.removeChild(t); parNod.insertBefore(t, nxtSib);
+		if(!this.isIE){
+			var start=a.selectionStart, end= a.selectionEnd;
+			var parNod = a.parentNode, nxtSib = a.nextSibling;
+			parNod.removeChild(a); parNod.insertBefore(a, nxtSib);
 			this.area_select(start, end-start);
-	/*	//	v = s.value;
-			n = s.cloneNode(true);
-			n.setAttribute("wrap", val);
-			s.parentNode.replaceChild(n, s);
-		//	n.value = v;*/
 		}
+		// reset some optimisation
+		this.settings['word_wrap']	= to;
+		this.focus();
+		this.update_size();
 	};	
 	/***** tabbed files managing functions *****/
 	
@@ -755,27 +788,28 @@
 		{
 			var id= settings['id'];
 			// create a new file object with defautl values
-			var new_file= new Object();
-			new_file['id']= id;
-			new_file['title']= id;
-			new_file['text']= "";
-			new_file['last_selection']= "";		
-			new_file['last_text_to_highlight']= "";
-			new_file['last_hightlighted_text']= "";
-			new_file['previous']= new Array();
-			new_file['next']= new Array();
-			new_file['last_undo']= "";
-			new_file['smooth_selection']= this.settings['smooth_selection'];
+			var new_file= {};
+			new_file['id']			= id;
+			new_file['title']		= id;
+			new_file['text']		= "";
+			new_file['last_selection']	= "";		
+			new_file['last_text_to_highlight']	= "";
+			new_file['last_hightlighted_text']	= "";
+			new_file['previous']	= [];
+			new_file['next']		= [];
+			new_file['last_undo']	= "";
+			new_file['smooth_selection']	= this.settings['smooth_selection'];
 			new_file['do_highlight']= this.settings['start_highlight'];
-			new_file['syntax']= this.settings['syntax'];
-			new_file['scroll_top']= 0;
-			new_file['scroll_left']= 0;
+			new_file['syntax']		= this.settings['syntax'];
+			new_file['scroll_top']	= 0;
+			new_file['scroll_left']	= 0;
 			new_file['selection_start']= 0;
 			new_file['selection_end']= 0;
-			new_file['edited']= false;
-			new_file['font_size']= this.settings["font_size"];
-			new_file['font_family']= this.settings["font_family"];
-			new_file['toolbar']= {'links':{}, 'selects': {}};
+			new_file['edited']		= false;
+			new_file['font_size']	= this.settings["font_size"];
+			new_file['font_family']	= this.settings["font_family"];
+			new_file['word_wrap']	= this.settings["word_wrap"];
+			new_file['toolbar']		= {'links':{}, 'selects': {}};
 			new_file['compare_edited_text']= new_file['text'];
 			
 			
@@ -872,6 +906,7 @@
 			save['selection_end']= this.last_selection["selectionEnd"];
 			save['font_size']= this.settings["font_size"];
 			save['font_family']= this.settings["font_family"];
+			save['word_wrap']= this.settings["word_wrap"];
 			save['toolbar']= {'links':{}, 'selects': {}};
 			// save toolbar buttons state for fileSpecific buttons
 			var links= _$("toolbar_1").getElementsByTagName("a");
@@ -879,7 +914,7 @@
 			{
 				if(links[i].getAttribute('fileSpecific')=='yes')
 				{
-					var save_butt= new Object();
+					var save_butt= {};
 					var img= links[i].getElementsByTagName('img')[0];
 					save_butt['classLock']= img.classLock;
 					save_butt['className']= img.className;
@@ -976,6 +1011,9 @@
 		
 		// smooth mode
 		this.execCommand("change_smooth_selection_mode", new_file['smooth_selection']);
+		
+		// word_wrap
+		this.execCommand("set_word_wrap", new_file['word_wrap']);
 			
 		// restore links state in toolbar
 		var links= new_file['toolbar']['links'];
@@ -983,7 +1021,7 @@
 		{
 			if(img= _$(i).getElementsByTagName('img')[0])
 			{
-				var save_butt= new Object();
+				var save_butt= {};
 				img.classLock= links[i]['classLock'];
 				img.className= links[i]['className'];
 				img.oldClassName= links[i]['oldClassName'];

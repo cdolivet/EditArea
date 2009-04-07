@@ -10,42 +10,12 @@
 	<style> 
 	/*	html{
 			width: 80%;
-		}*/
+		} */
 		::-moz-selection{
-	background:#cc0000;
-	color:#fff;
-}
-
-::selection {
-	background:#cc0000;
-	color:#fff;
-}
-
-textarea::-moz-selection, textarea::selection {
-background: #6DC0FF;
-color: #E1F2FF;
-}
-
-
-
+			background:#cc0000;
+			color:#fff;
+		}
 	</style>
-<script language='javascript'>
-/*
-var reportStatus = new Array();
-function report ( msg ) {
-    reportStatus.push ( msg );
-};
-function showReport ( err ) {
-    alert ( reportStatus.join ( "\n" ) );
-};
-		window.onerror = function ( err, url, line ) {
-			if(editAreaLoader.isIE){
-				report ( "loader: "+err + " [" + url + " - line " + line + "]" );
-				showReport();
-			}
-		};
-*/
-	</script>
 	
 <script language="Javascript" type="text/javascript" src="mootools-1.2.1-core-yc.js"></script>
 <!--
@@ -53,7 +23,7 @@ function showReport ( err ) {
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
 -->
 
-<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>
+<script type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.gz"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
@@ -71,7 +41,7 @@ editAreaLoader.init({
 			id: "src"	// id of the textarea to transform	
 			//,smooth_selection: false
 			,font_size: "10"	
-			//,font_family: "verdana,monospace",
+			//,font_family: "verdana,monospace"
 			,start_highlight: true	// if start with highlight
 			,cursor_position: "begin"
 		//	,autocompletion: true
@@ -97,9 +67,10 @@ editAreaLoader.init({
 			,EA_file_switch_off_callback: "my_EA_switch_off"
 	//		,EA_file_close_callback: "my_EA_file_close"
 		//	,submit_callback: "my_submit"
-			,allow_resize: "y" // "both"
+			,allow_resize: "both" // "both"
+			,word_wrap: true
 	//		,allow_toggle: true
-			,language: "fr"
+			,language: "ja"
 			,syntax: "php"
 		//	,wrap_text: true
 		//	,is_editable: false
@@ -296,6 +267,25 @@ editAreaLoader.init({
 		editAreaLoader.execCommand('src', 'set_editable', !editAreaLoader.execCommand('src', 'is_editable'));
 	}
 	
+	function toogle_wrap()
+	{
+		editAreaLoader.execCommand('src', 'set_word_wrap', !editAreaLoader.execCommand('src', "settings['wrap_text']"));
+	}
+	
+	function increaseWidth()
+	{
+		document.getElementById('frame_src').style.width= (document.getElementById('frame_src').offsetWidth+1)+"px";
+		editAreaLoader.execCommand('src', 'focus');
+		editAreaLoader.execCommand('src', 'update_size');
+	}
+	
+	function decreaseWidth()
+	{
+		document.getElementById('frame_src').style.width= (document.getElementById('frame_src').offsetWidth-1)+"px";
+		editAreaLoader.execCommand('src', 'focus');
+		editAreaLoader.execCommand('src', 'update_size');
+	}
+	
 	function open_file1()
 	{
 		var new_file= {id: "to\\ � # � to", text: "aaaaaaaaaaa\n print('toto'); ", title: 'beautiful title', do_highlight: true, syntax: 'php'};
@@ -410,7 +400,7 @@ Test with php syntax.<br />
 <form action='' method='post' onsubmit='alert("hah")'>
 <!--<iframe src='http://www.google.fr' style='position: fixed;width: 100%;height: 200px' id='iframe_test' ></iframe>-->
 <div id="container" stfyle='position: absolute; top: 80px; left: 150px; border: solid red 1px; '>
-<textarea id="src" style="height: 350px; width: 100%;" name="toto" enctype="multipart/form-data" onfojcus="this.focused=true;" onbjlur="this.focused=false;" >
+<textarea id="src" style="height: 350px; width: 513px;" name="toto" enctype="multipart/form-data" onfojcus="this.focused=true;" onbjlur="this.focused=false;" >
 <?php
 	$val='
 < ?php	
@@ -452,7 +442,7 @@ $val2='
 ';
 
 
-for($i=0; $i<5; $i++)
+for($i=0; $i<1; $i++)
 	echo $val;
 ?>
 </textarea>
@@ -462,7 +452,6 @@ for($i=0; $i<5; $i++)
 <div id="test_pre" style="white-space: pre;">
 	<?=htmlspecialchars($val);?>
 </div>-->
-<input type='button' onclick='console.log(window.frames["frame_src"].editArea)' value='Log editArea' />
 <input type='button' onclick='alert(editAreaLoader.getValue("src"));' value='get value' />
 <input type='button' onclick='editAreaLoader.setValue("src", "bouh");' value='set value' />
 <input type='button' onclick='test_getSelectionRange("src");' value='getSelectionRange' />
@@ -483,6 +472,10 @@ for($i=0; $i<5; $i++)
 <input type='button' onclick='close_file1()' value='close file 1' />
 <input type='button' onclick='open_many_files()' value='open many files' />
 <input type='button' onclick='toogle_editable()' value='toogle editable' />
+<input type='button' onclick='toogle_wrap()' value='toogle wrap' />
+<input type='button' onclick='increaseWidth()' value='w++' />
+<input type='button' onclick='decreaseWidth()' value='w--' />
+<input type='button' onclick='console.log(window.frames["frame_src"].editArea)' value='firbug Log editArea' />
 <br />
 <textarea id='src2' style="height: 250px; width: 650px" name="titi" onafterpaste='alert("paste")' oninput='alert("input")' >
 	bouh
