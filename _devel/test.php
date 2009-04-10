@@ -23,7 +23,7 @@
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
 -->
 
-<script type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
+<script type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.gz"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
@@ -70,7 +70,7 @@ editAreaLoader.init({
 			,allow_resize: "both" // "both"
 			,word_wrap: true
 	//		,allow_toggle: true
-			,language: "ja"
+			,language: "fr"
 			,syntax: "php"
 		//	,wrap_text: true
 		//	,is_editable: false
@@ -269,7 +269,7 @@ editAreaLoader.init({
 	
 	function toogle_wrap()
 	{
-		editAreaLoader.execCommand('src', 'set_word_wrap', !editAreaLoader.execCommand('src', "settings['wrap_text']"));
+		editAreaLoader.execCommand('src', 'set_word_wrap', !editAreaLoader.execCommand('src', "settings['word_wrap']"));
 	}
 	
 	function increaseWidth()

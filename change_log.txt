@@ -1,31 +1,10 @@
-- fonctionne necore osus IE6? ie7?
-- compatibilité sous opera + safari 3.* & 4 + IE6&7&8 + chrome 1&2
-- opera: voir pb de cursor_end sur ()[] pour une ligne wrappée (merdouille dans displayToCursorPosition)
-- opera: bug si premier caractère en retour de ligne est un espace pour une ligne wrappée
-- optimiser pour ne mettre à jour que les lignes ayant changé ds la partie avec coloration syntaxique
-- maj de la doc
-
-ok: ajouter traduction pour le bouton word wrap dans toutes les langues
-ok: ajouter le bouton
-ok: décommenter le fait que le wrap_text n'est pas implémenté
-ok: opera: regler pb de wrap lié aux balises <pre> 
-ok: regler pb la hauteur de la zone
-ok: pb qd on appuie sur enter ca chie sur les lignes
-ok: sous IE8 pb de selection en fin de ligne
-ok: SOUS IE8 pb fin de selection (1 caractères de différence par ligne wrapé)
-ok: faire gaffe entre show line_clolors a false et ligne de fond qui se met pas à jour
-ok: pb selection curseur qd le 1er est sur la deuxième ligne et la 1er pourrai tenir sur la 1ere ligne
-ok: pb de brakcet matching sous IE8: 			$news[$line["author"]]=$line['nb_news'];
-ok: Faire bonne numérotation de ligne (pb apres toggle sous IE8)
-ok: revoir toutes les utilisation de lineHeight ( ds scroll_page() )
-
 **** v 0.8 ****
-- Word-wrap is now supported
+- Word-wrap is now supported (except for opera...). The new init() option is 'word_wrap' to set to 'true' (default is false). A new button appears in the default toolbar (button_code: 'word_wrap' )
 - We can now clearly see the selected text
 - Add Internet explorer 8 support (but sadly I must use IE7 emulate mode in iframe due to a bug with tabulation width not beeing resized in IE's textarea) 
 - Add Safari 4 support
 - Add Chrome 2 support
-- Better support of Opera >= 9.6
+- Better support of Opera 9.6
 - Add Simplified Chinese translation "zh" (thanks to Abentian)
 - Add Bulgariane translation "bg" (thanks to Valentin Hristov)
 - Rename internal function $() by _$()

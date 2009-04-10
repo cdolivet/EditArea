@@ -24,7 +24,7 @@
 			t2= new Date().getTime();
 			
 			// if selection change
-			if(this.last_selection["line_start"] != infos["line_start"] || this.last_selection["line_nb"] != infos["line_nb"] || infos["full_text"] != this.last_selection["full_text"] || this.reload_highlight || this.last_selection["selectionStart"] != infos["selectionStart"] || this.last_selection["selectionEnd"] != infos["selectionEnd"] )
+			if(this.last_selection["line_start"] != infos["line_start"] || this.last_selection["line_nb"] != infos["line_nb"] || infos["full_text"] != this.last_selection["full_text"] || this.reload_highlight || this.last_selection["selectionStart"] != infos["selectionStart"] || this.last_selection["selectionEnd"] != infos["selectionEnd"] || !timer_checkup )
 			{
 				// move and adjust text selection elements
 				new_top		= this.getLinePosTop( infos["line_start"] );
@@ -79,7 +79,8 @@
 			}
 			
 			// manage bracket finding
-			if(infos["line_start"] != this.last_selection["line_start"] || infos["curr_pos"] != this.last_selection["curr_pos"] || infos["full_text"].length!=this.last_selection["full_text"].length || this.reload_highlight){
+			if( infos["line_start"] != this.last_selection["line_start"] || infos["curr_pos"] != this.last_selection["curr_pos"] || infos["full_text"].length!=this.last_selection["full_text"].length || this.reload_highlight || !timer_checkup )
+			{
 				// move _cursor_pos
 				var selec_char= infos["curr_line"].charAt(infos["curr_pos"]-1);
 				var no_real_move=true;
@@ -121,10 +122,12 @@
 
 
 	EditArea.prototype.get_selection_infos= function(){
+		var sel={}, start, end;
+		
 		if(this.isIE)
 			this.getIESelection();
-		var start=this.textarea.selectionStart;
-		var end=this.textarea.selectionEnd;		
+		start=this.textarea.selectionStart;
+		end=this.textarea.selectionEnd;		
 		
 		if(this.last_selection["selectionStart"]==start && this.last_selection["selectionEnd"]==end && this.last_selection["full_text"]==this.textarea.value)
 			return this.last_selection;
@@ -137,56 +140,55 @@
 			this.area_select(start, 0);
 		}
 		
-		var selections={};
-		selections["selectionStart"]= start;
-		selections["selectionEnd"]= end;		
-		selections["full_text"]= this.textarea.value;
-		selections["line_start"]=1;
-		selections["line_nb"]=1;
-		selections["curr_pos"]=0;
-		selections["curr_line"]="";
-		selections["indexOfCursor"]=0;
-		selections["selec_direction"]= this.last_selection["selec_direction"];
+		sel["selectionStart"]= start;
+		sel["selectionEnd"]= end;		
+		sel["full_text"]= this.textarea.value;
+		sel["line_start"]=1;
+		sel["line_nb"]=1;
+		sel["curr_pos"]=0;
+		sel["curr_line"]="";
+		sel["indexOfCursor"]=0;
+		sel["selec_direction"]= this.last_selection["selec_direction"];
 		
-		//return selections;	
-		var splitTab=selections["full_text"].split("\n");
+		//return sel;	
+		var splitTab=sel["full_text"].split("\n");
 		var nbLine=Math.max(0, splitTab.length);		
-		var nbChar=Math.max(0, selections["full_text"].length - (nbLine - 1));	// (remove \n caracters from the count)
-		if(selections["full_text"].indexOf("\r")!=-1)
+		var nbChar=Math.max(0, sel["full_text"].length - (nbLine - 1));	// (remove \n caracters from the count)
+		if(sel["full_text"].indexOf("\r")!=-1)
 			nbChar= nbChar - (nbLine -1);		// (remove \r caracters from the count)
-		selections["nb_line"]=nbLine;		
-		selections["nb_char"]=nbChar;		
+		sel["nb_line"]=nbLine;		
+		sel["nb_char"]=nbChar;		
 		if(start>0){
-			var str=selections["full_text"].substr(0,start);
-			selections["curr_pos"]= start - str.lastIndexOf("\n");
-			selections["line_start"]=Math.max(1, str.split("\n").length);
+			var str=sel["full_text"].substr(0,start);
+			sel["curr_pos"]= start - str.lastIndexOf("\n");
+			sel["line_start"]=Math.max(1, str.split("\n").length);
 		}else{
-			selections["curr_pos"]=1;
+			sel["curr_pos"]=1;
 		}
 		if(end>start){
-			selections["line_nb"]=selections["full_text"].substring(start,end).split("\n").length;
+			sel["line_nb"]=sel["full_text"].substring(start,end).split("\n").length;
 		}
-		selections["indexOfCursor"]=start;		
-		selections["curr_line"]=splitTab[Math.max(0,selections["line_start"]-1)];
+		sel["indexOfCursor"]=start;		
+		sel["curr_line"]=splitTab[Math.max(0,sel["line_start"]-1)];
 		
 		// determine in with direction the direction grow
-		if(selections["selectionStart"]==this.last_selection["selectionStart"]){
-			if(selections["selectionEnd"]>this.last_selection["selectionEnd"])
-				selections["selec_direction"]= "down";
-			else if(selections["selectionEnd"] == this.last_selection["selectionStart"])
-				selections["selec_direction"]= this.last_selection["selec_direction"];
-		}else if(selections["selectionStart"] == this.last_selection["selectionEnd"] && selections["selectionEnd"]>this.last_selection["selectionEnd"]){
-			selections["selec_direction"]= "down";
+		if(sel["selectionStart"]==this.last_selection["selectionStart"]){
+			if(sel["selectionEnd"]>this.last_selection["selectionEnd"])
+				sel["selec_direction"]= "down";
+			else if(sel["selectionEnd"] == this.last_selection["selectionStart"])
+				sel["selec_direction"]= this.last_selection["selec_direction"];
+		}else if(sel["selectionStart"] == this.last_selection["selectionEnd"] && sel["selectionEnd"]>this.last_selection["selectionEnd"]){
+			sel["selec_direction"]= "down";
 		}else{
-			selections["selec_direction"]= "up";
+			sel["selec_direction"]= "up";
 		}
 			
 		_$("nbLine").innerHTML= nbLine;		
 		_$("nbChar").innerHTML= nbChar;		
-		_$("linePos").innerHTML=selections["line_start"];
-		_$("currPos").innerHTML=selections["curr_pos"];
+		_$("linePos").innerHTML=sel["line_start"];
+		_$("currPos").innerHTML=sel["curr_pos"];
 		
-		return selections;		
+		return sel;		
 	};
 	
 	// set IE position in Firefox mode (textarea.selectionStart and textarea.selectionEnd)

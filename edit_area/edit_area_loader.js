@@ -491,7 +491,7 @@ EditAreaLoader.prototype ={
 				t.focused=true;
 				set_IE_selection(t);
 			}else{
-				if(this.isOpera){	// Opera bug when moving selection start and selection end
+				if(this.isOpera && this.isOpera < 9.6 ){	// Opera bug when moving selection start and selection end
 					t.setSelectionRange(0, 0);
 				}
 				try{

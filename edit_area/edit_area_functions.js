@@ -512,7 +512,7 @@
 				
 			}
 		}
-		console.log( new_pos, char_left, length, nbLineToScroll, toScrollAmount, _$("result").clientHeigh );
+		//console.log( new_pos, char_left, length, nbLineToScroll, toScrollAmount, _$("result").clientHeigh );
 		this.check_line_selection();
 		this.scroll_to_view(view);
 	};
@@ -746,6 +746,14 @@
 	// open a new tab for the given file
 	EditArea.prototype.set_word_wrap= function(to){
 		var t=this, a= t.textarea;
+		
+		if( t.isOpera )
+		{
+			this.settings['word_wrap']= false;
+			t.switchClassSticky( _$("word_wrap"), 'editAreaButtonDisabled', true );
+			return false;
+		}
+		
 		if( to )
 		{
 			wrap_mode = 'soft';
@@ -753,6 +761,10 @@
 			this.container.style.width="";
 			this.content_highlight.style.width="";
 			a.style.width="100%";
+			if( t.isIE && t.isIE < 7 )	// IE 6 count 50 px too much
+			{
+				a.style.width	= ( a.offsetWidth-5 )+"px";
+			}
 			
 			t.switchClassSticky( _$("word_wrap"), 'editAreaButtonSelected', false );
 		}
@@ -778,6 +790,7 @@
 		this.settings['word_wrap']	= to;
 		this.focus();
 		this.update_size();
+		this.check_line_selection();
 	};	
 	/***** tabbed files managing functions *****/
 	

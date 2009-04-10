@@ -67,7 +67,7 @@
 		
 		t.isResizing=false;	// resize var
 		
-		// init with settings and ID
+		// init with settings and ID (area_id is a global var defined by editAreaLoader on iframe creation
 		t.id= area_id;
 		t.settings= editAreas[t.id]["settings"];
 		
@@ -91,7 +91,7 @@
 		
 	};
 	EditArea.prototype.init= function(){
-		var t=this;
+		var t=this, a, s=t.settings;
 		t.textarea			= _$("textarea");
 		t.container			= _$("container");
 		t.result			= _$("result");
@@ -102,11 +102,12 @@
 		t.editor_area		= _$("editor");
 		t.tab_browsing_area	= _$("tab_browsing_area");
 		t.test_font_size	= _$("test_font_size");
+		a = t.textarea;
 		
-		if(!t.settings['is_editable'])
+		if(!s['is_editable'])
 			t.set_editable(false);
 		
-		t.set_show_line_colors( t.settings['show_line_colors'] );
+		t.set_show_line_colors( s['show_line_colors'] );
 		
 		if(syntax_selec= _$("syntax_selection"))
 		{
@@ -115,7 +116,7 @@
 				var syntax= t.syntax_list[i];
 				var option= document.createElement("option");
 				option.value= syntax;
-				if(syntax==t.settings['syntax'])
+				if(syntax==s['syntax'])
 					option.selected= "selected";
 				option.innerHTML= t.get_translation("syntax_" + syntax, "word");
 				syntax_selec.appendChild(option);
@@ -145,27 +146,28 @@
 			}
 		}
 		
-		
 		// init datas
-		t.textarea.value=editAreas[t.id]["textarea"].value;
-		if(t.settings["debug"])
+		a.value	= 'a';//editAreas[t.id]["textarea"].value;
+	
+		if(s["debug"])
+		{
 			t.debug=parent.document.getElementById("edit_area_debug_"+t.id);
-		
+		}
 		// init size		
 		//this.update_size();
 		
 		if(_$("redo") != null)
 			t.switchClassSticky(_$("redo"), 'editAreaButtonDisabled', true);
 		
-		
 		// insert css rules for highlight mode		
-		if(typeof(parent.editAreaLoader.syntax[t.settings["syntax"]])!="undefined"){
+		if(typeof(parent.editAreaLoader.syntax[s["syntax"]])!="undefined"){
 			for(var i in parent.editAreaLoader.syntax){
 				if (typeof(parent.editAreaLoader.syntax[i]["styles"]) != "undefined"){
 					t.add_style(parent.editAreaLoader.syntax[i]["styles"]);
 				}
 			}
 		}
+	
 		// init key events
 		if(t.isOpera)
 			_$("editor").onkeypress= keyDown;
@@ -179,16 +181,16 @@
 				_$(t.inlinePopup[i]["popup_id"]).onkeypress= keyDown;
 		}
 		
-		if(t.settings["allow_resize"]=="both" || t.settings["allow_resize"]=="x" || t.settings["allow_resize"]=="y")
+		if(s["allow_resize"]=="both" || s["allow_resize"]=="x" || s["allow_resize"]=="y")
 			t.allow_resize(true);
 		
 		parent.editAreaLoader.toggle(t.id, "on");
-		//t.textarea.focus();
+		//a.focus();
 		// line selection init
 		t.change_smooth_selection_mode(editArea.smooth_selection);
 		// highlight
-		t.execCommand("change_highlight", t.settings["start_highlight"]);
-		
+		t.execCommand("change_highlight", s["start_highlight"]);
+	
 		// get font size datas		
 		t.set_font(editArea.settings["font_family"], editArea.settings["font_size"]);
 		
@@ -203,8 +205,8 @@
 			children[i].style.KhtmlUserSelect = "none";  // Konqueror/Safari*/
 		}
 		
-		t.textarea.spellcheck= t.settings["gecko_spellcheck"];
-		
+		a.spellcheck= s["gecko_spellcheck"];
+	
 		/** Browser specific style fixes **/
 		
 		// fix rendering bug for highlighted lines beginning with no tabs
@@ -215,7 +217,7 @@
 		}
 		
 		if(t.isIE && t.isIE < 8 ){
-			t.textarea.style.marginTop= "-1px";
+			a.style.marginTop= "-1px";
 		}
 		/*
 		if(t.isOpera){
@@ -224,24 +226,24 @@
 		
 		if( t.isSafari ){
 			t.editor_area.style.position= "absolute";
-			t.textarea.style.marginLeft="-3px";
+			a.style.marginLeft="-3px";
 			if( t.isSafari < 4 )
-				t.textarea.style.marginTop="1px";
+				a.style.marginTop="1px";
 		}
 		
 		if( t.isChrome ){
 			t.editor_area.style.position= "absolute";
-			t.textarea.style.marginLeft="0px";
-			t.textarea.style.marginTop="0px";
+			a.style.marginLeft="0px";
+			a.style.marginTop="0px";
 		}
 		
 		// si le textarea n'est pas grand, un click sous le textarea doit provoquer un focus sur le textarea
 		parent.editAreaLoader.add_event(t.result, "click", function(e){ if((e.target || e.srcElement)==editArea.result) { editArea.area_select(editArea.textarea.value.length, 0);}  });
 		
-		if(t.settings['is_multi_files']!=false)
+		if(s['is_multi_files']!=false)
 			t.open_file({'id': t.curr_file, 'text': ''});
 	
-		t.set_word_wrap( t.settings['word_wrap'] );
+		t.set_word_wrap( s['word_wrap'] );
 		
 		setTimeout("editArea.focus();editArea.manage_size();editArea.execCommand('EA_load');", 10);		
 		//start checkup routine
@@ -253,7 +255,7 @@
 			if(typeof(t.plugins[i].onload)=="function")
 				t.plugins[i].onload();
 		}
-		if(t.settings['fullscreen']==true)
+		if(s['fullscreen']==true)
 			t.toggle_full_screen(true);
 	
 		parent.editAreaLoader.add_event(window, "resize", editArea.update_size);
