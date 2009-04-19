@@ -1116,7 +1116,7 @@
 			for( j=0; j<a_options.length; j++)
 			{
 				if( a_options[j].value == a_selects[i] )
-					_$(i).a_options[j].selected=true;
+					_$(i).options[j].selected=true;
 			}
 		}
 	
