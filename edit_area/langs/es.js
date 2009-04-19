@@ -59,5 +59,6 @@ syntax_brainfuck: "Brainfuck",
 syntax_sql: "SQL",
 syntax_ruby: "Ruby",
 syntax_coldfusion: "Coldfusion",
+syntax_java: "Java",
 close_tab: "Close file"
 };

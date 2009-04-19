@@ -7,7 +7,7 @@
 	EditArea.prototype.check_line_selection= function(timer_checkup){
 		var changes, infos, new_top, new_width,i;
 		
-		var t1=t2=t2_1=t3=tend= new Date().getTime();
+		var t1=t2=t2_1=t3=tLines=tend= new Date().getTime();
 		// l'editeur n'existe plus => on quitte
 		if(!editAreas[this.id])
 			return false;
@@ -62,8 +62,8 @@
 					}
 					this.selection_field_text.innerHTML = this.selection_field.innerHTML;
 					t2_1 = new Date().getTime();
-					// check if we need to update the highlighted background
-					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
+					// check if we need to update the highlighted background 
+					if(this.reload_highlight || (infos["full_text"] != this.last_text_to_highlight && (this.last_selection["line_start"]!=infos["line_start"] || this.show_line_colors || this.settings['word_wrap'] || this.last_selection["line_nb"]!=infos["line_nb"] || this.last_selection["nb_line"]!=infos["nb_line"]) ) )
 					{
 						this.maj_highlight(infos);
 					}
@@ -74,10 +74,18 @@
 			// manage line heights
 			if( this.settings['word_wrap'] && infos["full_text"] != this.last_selection["full_text"])
 			{
-				//this.fixLinesHeight(changes.lineStart,changes.lineNewEnd);
-				this.fixLinesHeight(changes.lineStart, -1);
+				// refresh only 1 line if text change concern only one line and that the total line number has not changed
+				if( changes.newText.split("\n").length == 1 && this.last_selection['nb_line'] && infos['nb_line'] == this.last_selection['nb_line'] )
+				{
+					this.fixLinesHeight( infos['full_text'], changes.lineStart, changes.lineStart );
+				}
+				else
+				{
+					this.fixLinesHeight( infos['full_text'], changes.lineStart, -1 );
+				}
 			}
-			
+		
+			tLines= new Date().getTime();
 			// manage bracket finding
 			if( infos["line_start"] != this.last_selection["line_start"] || infos["curr_pos"] != this.last_selection["curr_pos"] || infos["full_text"].length!=this.last_selection["full_text"].length || this.reload_highlight || !timer_checkup )
 			{
@@ -89,17 +97,17 @@
 					no_real_move=false;					
 					//findEndBracket(infos["line_start"], infos["curr_pos"], selec_char);
 					if(this.findEndBracket(infos, selec_char) === true){
-						_$("end_bracket").style.visibility="visible";
-						_$("cursor_pos").style.visibility="visible";
-						_$("cursor_pos").innerHTML= selec_char;
-						_$("end_bracket").innerHTML= (this.assocBracket[selec_char] || this.revertAssocBracket[selec_char]);
+						_$("end_bracket").style.visibility	="visible";
+						_$("cursor_pos").style.visibility	="visible";
+						_$("cursor_pos").innerHTML			= selec_char;
+						_$("end_bracket").innerHTML			= (this.assocBracket[selec_char] || this.revertAssocBracket[selec_char]);
 					}else{
-						_$("end_bracket").style.visibility="hidden";
-						_$("cursor_pos").style.visibility="hidden";
+						_$("end_bracket").style.visibility	="hidden";
+						_$("cursor_pos").style.visibility	="hidden";
 					}
 				}else{
-					_$("cursor_pos").style.visibility="hidden";
-					_$("end_bracket").style.visibility="hidden";
+					_$("cursor_pos").style.visibility	="hidden";
+					_$("end_bracket").style.visibility	="hidden";
 				}
 				//alert("move cursor");
 				this.displayToCursorPosition("cursor_pos", infos["line_start"], infos["curr_pos"]-1, infos["curr_line"], no_real_move);
@@ -110,12 +118,11 @@
 		}
 		
 		tend= new Date().getTime();
-		/*if( (tend-t1) > 30 )
-			this.debug.value="tps total: "+ (tend-t1) + " tps get_infos: "+ (t2-t1)+ " tps selec: "+ (t2_1-t2)+ " tps highlight: "+ (t3-t2_1) +" tps cursor+lines: "+ (tend-t3)+" \n"+this.debug.value;
+		/*if( (tend-t1) > 7 )
+			console.log( "tps total: "+ (tend-t1) + " tps get_infos: "+ (t2-t1)+ " tps selec: "+ (t2_1-t2)+ " tps highlight: "+ (t3-t2_1) +" tps lines: "+ (tLines-t3) +" tps cursor+lines: "+ (tend-tLines)+" \n" );
 		*/
 		
 		if(timer_checkup){
-			//if(this.do_highlight==true)	//can slow down check speed when highlight mode is on
 			setTimeout("editArea.check_line_selection(true)", this.check_line_selection_timer);
 		}
 	};
@@ -492,8 +499,8 @@
 	};
 	
 	EditArea.prototype.displayToCursorPosition= function(id, start_line, cur_pos, lineContent, no_real_move){
-		var elem,dest,content,posLeft=0,posTop,fixPadding,topOffset,endElem;
-		
+		var elem,dest,content,posLeft=0,posTop,fixPadding,topOffset,endElem;	
+
 		elem		= this.test_font_size;
 		dest		= _$(id);
 		content		= "<span id='test_font_size_inner'>"+lineContent.substr(0, cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span><span id='endTestFont'>"+lineContent.substr(cur_pos).replace(/&/g,"&amp;").replace(/</g,"&lt;")+"</span>";
@@ -502,14 +509,14 @@
 		} else {
 			elem.innerHTML= content;
 		}
-	
+		
 
-		//console.log( _$('endTestFont').offsetLeft, this.content_highlight.style.paddingLeft.replace("px", "") );
 		endElem		= _$('endTestFont');
 		topOffset	= endElem.offsetTop;
 		fixPadding	= parseInt( this.content_highlight.style.paddingLeft.replace("px", "") );
 		posLeft 	= 45 + endElem.offsetLeft + ( !isNaN( fixPadding ) && topOffset > 0 ? fixPadding : 0 );
 		posTop		= this.getLinePosTop( start_line ) + topOffset;// + Math.floor( ( endElem.offsetHeight - 1 ) / this.lineHeight ) * this.lineHeight;
+	
 		// detect the case where the span start on a line but has no display on it
 		if( this.isIE && cur_pos > 0 && endElem.offsetLeft == 0 )
 		{
@@ -517,14 +524,12 @@
 		}
 		if(no_real_move!=true){	// when the cursor is hidden no need to move him
 			dest.style.top=posTop+"px";
-			dest.style.left=posLeft+"px";		
+			dest.style.left=posLeft+"px";	
 		}
 		// usefull for smarter scroll
 		dest.cursor_top=posTop;
 		dest.cursor_left=posLeft;	
-		
 	//	_$(id).style.marginLeft=posLeft+"px";
-		
 	};
 	
 	EditArea.prototype.getLinePosTop= function(start_line){
@@ -557,8 +562,8 @@
 	 * @param Integer linestart
 	 * @param Integer lineEnd End line or -1 to cover all lines
 	 */
-	EditArea.prototype.fixLinesHeight= function( lineStart,lineEnd ){
-		var aText = this.textarea.value.split("\n");
+	EditArea.prototype.fixLinesHeight= function( textValue, lineStart,lineEnd ){
+		var aText = textValue.split("\n");
 		if( lineEnd == -1 )
 			lineEnd	= aText.length-1;
 		for( var i = Math.max(0, lineStart); i <= lineEnd; i++ )

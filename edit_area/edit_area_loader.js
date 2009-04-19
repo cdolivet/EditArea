@@ -8,7 +8,7 @@
 
 function EditAreaLoader(){
 	var t=this;
-	t.version= "0.8";
+	t.version= "0.8.1";
 	date= new Date();
 	t.start_time=date.getTime();
 	t.win= "loading";	// window loading state
@@ -47,7 +47,7 @@ function EditAreaLoader(){
 		,allow_toggle: true		// true or false
 		,language: "en"
 		,syntax: ""
-		,syntax_selection_allow: "basic,brainfuck,c,coldfusion,cpp,css,html,js,pas,perl,php,python,ruby,robotstxt,sql,tsql,vb,xml"
+		,syntax_selection_allow: "basic,brainfuck,c,coldfusion,cpp,css,html,java,js,pas,perl,php,python,ruby,robotstxt,sql,tsql,vb,xml"
 		,display: "onload" 		// onload or later
 		,max_undo: 30
 		,browsers: "known"	// all or known
@@ -318,7 +318,7 @@ EditAreaLoader.prototype ={
 				html+="<label for='edit_area_toggle_checkbox_"+ id +"'>{$toggle}</label></div>";	
 			}
 			if(editAreas[id]["settings"]["debug"])
-				html+="<textarea id='edit_area_debug_"+ id +"' style='z-index: 20; width: 100%; height: 120px;overflow: auto; border: solid black 1px;'></textarea><br />";				
+				html+="<textarea id='edit_area_debug_"+ id +"' spellcheck='off' style='z-index: 20; width: 100%; height: 120px;overflow: auto; border: solid black 1px;'></textarea><br />";				
 			html= t.translate(html, editAreas[id]["settings"]["language"]);				
 			span.innerHTML= html;				
 			father= d.getElementById(id).parentNode;

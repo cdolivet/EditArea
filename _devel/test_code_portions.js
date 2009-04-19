@@ -1,11 +1,8 @@
+// a good regexp for HTML tags: 
+// <([a-z][a-z0-9]*)((?:\s*)([^>="']+)(((=)[^>="'\s]+)|((=)((")(?:[^"\\]*(?:\\\\)*(?:\\"?)?)*(?:"|$)))|((=)('(?:[^'\\]*(?:\\\\)*(?:\\'?)?)*(?:'|$))))?)*(\s*)/?>
 
-if( this.settings['wrap_text'] ){
-			var t	= this.textarea.cloneNode(true);
-			t.wrap= 'hard';
-			t.setAttribute('wrap', 'hard');
-			t.value = infos["full_text"];
-			t.width	= '200px';
-		}
+// extract tag content (<(?:[a-z][a-z0-9]*))((?:(?:\s*)(?:[^>="']+)(?:(?:=[^>="'\s]+)|(?:=(?:(?:")(?:[^"\\]*(?:\\\\)*(?:\\"?)?)*(?:"|$)))|(?:=(?:'(?:[^'\\]*(?:\\\\)*(?:\\'?)?)*(?:'|$))))?)*(?:\s*))(/?>)
+
 
 /*** THIS IS JUST TESTS IN HIGHLIGHT.JS ***/
 	var a_spans				= this.content_highlight.getElementsByTagName('span');
@@ -58,7 +55,7 @@ if( this.settings['wrap_text'] ){
 		// .replace(/^(\s)/, '&nbsp;$1' ).replace(/(\s)$/, '$1&nbsp;' )
 		console.log( lastStartNode );
 		while( tmpNode.childNodes.length > 0 ){
-			( lastStartNode.parentNode | rootSpan ).insertBfore( tmpNode.firstChild, lastStartNode.nextSibling );
+			( lastStartNode.parentNode | rootSpan ).insertBefore( tmpNode.firstChild, lastStartNode.nextSibling );
 			lastStartNode	= lastStartNode.nextSibling;
 		}
 	}

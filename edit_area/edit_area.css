@@ -86,6 +86,10 @@ body, html, table, form, textarea{
 	
 }
 
+#selection_field strong{
+	font-weight:normal;
+}
+
 #selection_field.show_colors *, #selection_field_text * {
 	visibility: hidden;
 }

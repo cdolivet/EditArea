@@ -82,7 +82,9 @@
 						var x=this.get_escaped_regexp(this.load_syntax[lang]['QUOTEMARKS'][i]);
 						this.syntax[lang]["quotes"][x]=x;
 						//quote_tab[quote_tab.length]="("+x+"(?:\\\\"+x+"|[^"+x+"])*("+x+"|$))";
-						quote_tab[quote_tab.length]="("+x+"(?:[^"+x+"\\\\]*(\\\\\\\\)*(\\\\"+x+"?)?)*("+x+"|$))";
+						//previous working : quote_tab[quote_tab.length]="("+x+"(?:[^"+x+"\\\\]*(\\\\\\\\)*(\\\\"+x+"?)?)*("+x+"|$))";
+						quote_tab[quote_tab.length]="("+ x +"(\\\\.|[^"+ x +"])*(?:"+ x +"|$))";
+						
 						syntax_trace.push(x);			
 					}			
 				}

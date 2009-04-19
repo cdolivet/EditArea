@@ -147,7 +147,7 @@
 		}
 		
 		// init datas
-		a.value	= 'a';//editAreas[t.id]["textarea"].value;
+		//a.value	= 'a';//editAreas[t.id]["textarea"].value;
 	
 		if(s["debug"])
 		{
@@ -225,16 +225,16 @@
 		}*/
 		
 		if( t.isSafari ){
-			t.editor_area.style.position= "absolute";
-			a.style.marginLeft="-3px";
-			if( t.isSafari < 4 )
-				a.style.marginTop="1px";
+			t.editor_area.style.position	= "absolute";
+			a.style.marginLeft		="-3px";
+			if( t.isSafari < 3.2 ) // Safari 3.0 (3.1?)
+				a.style.marginTop	="1px";
 		}
 		
 		if( t.isChrome ){
-			t.editor_area.style.position= "absolute";
-			a.style.marginLeft="0px";
-			a.style.marginTop="0px";
+			t.editor_area.style.position	= "absolute";
+			a.style.marginLeft	="0px";
+			a.style.marginTop	="0px";
 		}
 		
 		// si le textarea n'est pas grand, un click sous le textarea doit provoquer un focus sur le textarea
@@ -312,7 +312,7 @@
 			}
 			
 			editArea.manage_size( true );
-			editArea.fixLinesHeight(0,-1);
+			editArea.fixLinesHeight( editArea.textarea.value, 0,-1);
 		}		
 	};
 	
@@ -352,7 +352,7 @@
 				if( this.isFirefox || this.isIE )
 					newW-=2;
 				if( this.isSafari )
-					newW-=3;
+					newW-=6;
 				this.content_highlight.style.width=this.selection_field_text.style.width=this.selection_field.style.width=this.test_font_size.style.width=newW+"px";
 			}
 			
@@ -384,7 +384,7 @@
 				}
 				destDiv.innerHTML= destDiv.innerHTML + newLines;
 				
-				this.fixLinesHeight( start, -1 );
+				this.fixLinesHeight( this.textarea.value, start, -1 );
 			}
 		
 			//4) be sure the text is well displayed

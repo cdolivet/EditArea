@@ -40,8 +40,8 @@
 editAreaLoader.init({
 			id: "src"	// id of the textarea to transform	
 			//,smooth_selection: false
-			,font_size: "10"	
-			//,font_family: "verdana,monospace"
+		//	,font_size: "10"	
+			,font_family: "verdana,monospace"
 			,start_highlight: true	// if start with highlight
 			,cursor_position: "begin"
 		//	,autocompletion: true
@@ -77,7 +77,7 @@ editAreaLoader.init({
 		//	,is_multi_files: true
 			,browsers: "known" 	// "known"
 		//	,display: "later" // set to "later" for a later transform or "onload" for a direct transform to EditArea
-			,debug: true
+			,debug: false
 			,plugins: "charmap"
 			,charmap_default: "arrows"
 		//	,syntax_selection_allow: "css,html,js,php,python,vb,xml,c,cpp,basic,pas,brainfuck"
@@ -392,6 +392,7 @@ editAreaLoader.init({
 	if(count($_POST)>0)
 		printf("<pre style='height: 100px; overflow: auto; border: solid black 1px;'>%s</pre>", print_r($_POST, true));
 ?>
+
 <h2>Edit area example</h2>
 Test with php syntax.<br />
 <!--<div style='position: absolute; top: 40px; left: 50px; border: solid red 1px; z-index: 100 '>
@@ -442,7 +443,7 @@ $val2='
 ';
 
 
-for($i=0; $i<1; $i++)
+for($i=0; $i<50; $i++)
 	echo $val;
 ?>
 </textarea>
@@ -477,7 +478,7 @@ for($i=0; $i<1; $i++)
 <input type='button' onclick='decreaseWidth()' value='w--' />
 <input type='button' onclick='console.log(window.frames["frame_src"].editArea)' value='firbug Log editArea' />
 <br />
-<textarea id='src2' style="height: 250px; width: 650px" name="titi" onafterpaste='alert("paste")' oninput='alert("input")' >
+<textarea id='src2' style="height: 250px; width: 650px" name="titi" _onafterpaste='alert("paste")' _oninput='alert("input")' >
 	bouh
 </textarea>
 </form>
