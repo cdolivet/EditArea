@@ -262,8 +262,12 @@
 		parent.editAreaLoader.add_event(parent.window, "resize", editArea.update_size);
 		parent.editAreaLoader.add_event(top.window, "resize", editArea.update_size);
 		parent.editAreaLoader.add_event(window, "unload", function(){
-			parent.editAreaLoader.remove_event(parent.window, "resize", editArea.update_size);
-	  		parent.editAreaLoader.remove_event(top.window, "resize", editArea.update_size);
+			// in case where editAreaLoader have been already cleaned
+			if( parent.editAreaLoader )
+			{
+				parent.editAreaLoader.remove_event(parent.window, "resize", editArea.update_size);
+		  		parent.editAreaLoader.remove_event(top.window, "resize", editArea.update_size);
+			}
 			if(editAreas[editArea.id] && editAreas[editArea.id]["displayed"]){
 				editArea.execCommand("EA_unload");
 			}

@@ -8,7 +8,7 @@
 
 function EditAreaLoader(){
 	var t=this;
-	t.version= "0.8.1";
+	t.version= "0.8.1.1";
 	date= new Date();
 	t.start_time=date.getTime();
 	t.win= "loading";	// window loading state

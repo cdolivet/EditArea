@@ -401,9 +401,14 @@ Test with php syntax.<br />
 <form action='' method='post' onsubmit='alert("hah")'>
 <!--<iframe src='http://www.google.fr' style='position: fixed;width: 100%;height: 200px' id='iframe_test' ></iframe>-->
 <div id="container" stfyle='position: absolute; top: 80px; left: 150px; border: solid red 1px; '>
-<textarea id="src" style="height: 350px; width: 513px;" name="toto" enctype="multipart/form-data" onfojcus="this.focused=true;" onbjlur="this.focused=false;" >
+<textarea id="src" style="height: 350px; width: 913px;" name="toto" enctype="multipart/form-data" onfojcus="this.focused=true;" onbjlur="this.focused=false;" >
 <?php
-	$val='
+	$val='<?php	
+	$authors	= array();
+	$news		= array();
+	/* this is a long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long comment for showing word-wrap feature */
+	$query	= "SELECT author, COUNT(id) as \'nb_news\' FROM news_messages GROUP BY author";
+	$result	= mysql_query($query, $DBnews);
 < ?php	
 	&ecute; &#x92c;&#x93f;&#x930;&#x92f;&#x93e;&#x928;&#x940;
 	//Thanks to TinyMCE developpers!

@@ -225,7 +225,6 @@
 			
 					nbOpendedSpan	= beginStr.split('<span').length - 1;
 					nbClosedSpan	= beginStr.split('</span').length - 1;
-					
 					// retrieve the previously opened span (Add 1 for the first level span?)
 					span 			= t.content_highlight.getElementsByTagName('span')[ nbOpendedSpan ];
 					
@@ -263,11 +262,11 @@
 							maxEndOffset	= tmpMaxEndOffset;
 						}
 					}
+					// Note: maxEndOffset is no more used but maxStartOffset will be used
 					
 					if( parentSpan.parentNode == t.content_highlight || parentSpan.parentNode.tagName == 'PRE' )
 					{
 						maxStartOffset	= Math.max( 0, beginStr.indexOf( '<span' ) );
-						maxEndOffset	= Math.max( 0, beginStr.indexOf( '</span' ) );
 					}
 					
 					// find the matching text node (this will be one that will be at the end of the beginStr
@@ -280,7 +279,7 @@
 						lastEndPos 				= Math.max( 0, beginStr.lastIndexOf( '>', maxStartOffset ) );
 		
 						// count the number of sub spans
-						nbSubSpanBefore			= beginStr.substr( lastEndPos + 1 ).split('<span').length-1;
+						nbSubSpanBefore			= beginStr.substr( lastEndPos ).split('<span').length-1;
 					}
 					
 					// there is no sub-span before
