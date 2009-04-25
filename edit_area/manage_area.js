@@ -130,9 +130,8 @@
 
 	EditArea.prototype.get_selection_infos= function(){
 		var sel={}, start, end, len, str;
-	var t1 = new Date().getTime();	
-		if(this.isIE)
-			this.getIESelection();
+	
+		this.getIESelection();
 		start	= this.textarea.selectionStart;
 		end		= this.textarea.selectionEnd;		
 		
@@ -205,6 +204,9 @@
 	EditArea.prototype.getIESelection= function(){
 		var selectionStart, selectionEnd, range, stored_range;
 		
+		if( !this.isIE )
+			return false;
+			
 		// make it work as nowrap mode (easier for range manipulation with lineHeight)
 		if( this.settings['word_wrap'] )
 			this.textarea.wrap='off';
@@ -242,14 +244,19 @@
 	
 	// select the text for IE (and take care of \r caracters)
 	EditArea.prototype.setIESelection= function(){
-		var nbLineStart=this.textarea.value.substr(0, this.textarea.selectionStart).split("\n").length - 1;
-		var nbLineEnd=this.textarea.value.substr(0, this.textarea.selectionEnd).split("\n").length - 1;
-		var range = document.selection.createRange();
-		range.moveToElementText( this.textarea );
+		var a = this.textarea, nbLineStart, nbLineEnd, range;
+		
+		if( !this.isIE )
+			return false;
+		
+		nbLineStart	= a.value.substr(0, a.selectionStart).split("\n").length - 1;
+		nbLineEnd 	= a.value.substr(0, a.selectionEnd).split("\n").length - 1;
+		range		= document.selection.createRange();
+		range.moveToElementText( a );
 		range.setEndPoint( 'EndToStart', range );
 		
-		range.moveStart('character', this.textarea.selectionStart - nbLineStart);
-		range.moveEnd('character', this.textarea.selectionEnd - nbLineEnd - (this.textarea.selectionStart - nbLineStart)  );
+		range.moveStart('character', a.selectionStart - nbLineStart);
+		range.moveEnd('character', a.selectionEnd - nbLineEnd - (a.selectionStart - nbLineStart)  );
 		range.select();
 	};
 	
@@ -315,8 +322,7 @@
 		this.is_tabbing=true;
 		//infos=getSelectionInfos();
 		//if( document.selection ){
-		if( this.isIE )
-			this.getIESelection();
+		this.getIESelection();
 		/* Insertion du code de formatage */
 		var start = this.textarea.selectionStart;
 		var end = this.textarea.selectionEnd;
@@ -347,11 +353,15 @@
 		this.textarea.selectionEnd = pos_end;
 		
 		//if( document.selection ){
-		if(this.isIE){
+		if(this.isIE)
+		{
 			this.setIESelection();
 			setTimeout("editArea.is_tabbing=false;", 100);	// IE can't accept to make 2 tabulation without a little break between both
-		}else
-			this.is_tabbing=false;	
+		}
+		else
+		{ 
+			this.is_tabbing=false;
+		}	
 		
   	};
 	
@@ -362,8 +372,7 @@
 		t.is_tabbing=true;
 		//infos=getSelectionInfos();
 		//if( document.selection ){
-		if(t.isIE)
-			t.getIESelection();
+		t.getIESelection();
 		
 		var start	= a.selectionStart;
 		var end		= a.selectionEnd;
@@ -424,8 +433,7 @@
 	EditArea.prototype.press_enter= function(){		
 		if(!this.smooth_selection)
 			return false;
-		if(this.isIE)
-			this.getIESelection();
+		this.getIESelection();
 		var scrollTop= this.result.scrollTop;
 		var scrollLeft= this.result.scrollLeft;
 		var start=this.textarea.selectionStart;
@@ -449,8 +457,8 @@
 		this.area_select(start+ begin_line.length ,0);
 		// during this process IE scroll back to the top of the textarea
 		if(this.isIE){
-			this.result.scrollTop= scrollTop;
-			this.result.scrollLeft= scrollLeft;
+			this.result.scrollTop	= scrollTop;
+			this.result.scrollLeft	= scrollLeft;
 		}
 		return true;
 		
@@ -584,12 +592,17 @@
 		start	= Math.max(0, Math.min(this.textarea.value.length, start));
 		end		= Math.max(start, Math.min(this.textarea.value.length, start+length));
 
-		if(this.isIE){
-			this.textarea.selectionStart = start;
-			this.textarea.selectionEnd = end;		
+		if(this.isIE)
+		{
+			this.textarea.selectionStart	= start;
+			this.textarea.selectionEnd		= end;		
 			this.setIESelection();
-		}else{
-			if(this.isOpera && this.isOpera < 9.6 ){	// Opera bug when moving selection start and selection end
+		}
+		else
+		{
+			// Opera bug when moving selection start and selection end
+			if(this.isOpera && this.isOpera < 9.6 )
+			{	
 				this.textarea.setSelectionRange(0, 0);
 			}
 			this.textarea.setSelectionRange(start, end);

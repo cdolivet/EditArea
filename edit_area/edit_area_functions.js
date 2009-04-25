@@ -10,16 +10,17 @@
 	};
 	
 	EditArea.prototype.show_waiting_screen= function(){
-		width= this.editor_area.offsetWidth;
-		height= this.editor_area.offsetHeight;
-		if( !(this.isIE && this.isIE<6) ){
-			width-=2;
-			height-=2;
+		width	= this.editor_area.offsetWidth;
+		height	= this.editor_area.offsetHeight;
+		if( !(this.isIE && this.isIE<6) )
+		{
+			width	-= 2;
+			height	-= 2;
 		}
-		this.processing_screen.style.display="block";
-		this.processing_screen.style.width= width+"px";
-		this.processing_screen.style.height= height+"px";
-		this.waiting_screen_displayed= true;
+		this.processing_screen.style.display= "block";
+		this.processing_screen.style.width	= width+"px";
+		this.processing_screen.style.height	= height+"px";
+		this.waiting_screen_displayed		= true;
 	};
 	
 	EditArea.prototype.hide_waiting_screen= function(){
@@ -373,16 +374,16 @@
 	
 	EditArea.prototype.undo= function(){
 		//alert("undo"+this.previous.length);
-		if(this.previous.length > 0){
-			if(this.isIE)
-				this.getIESelection();
+		if(this.previous.length > 0)
+		{
+			this.getIESelection();
 		//	var pos_cursor=this.textarea.selectionStart;
-			this.next.push({"text": this.textarea.value, "selStart": this.textarea.selectionStart, "selEnd": this.textarea.selectionEnd});
+			this.next.push( { "text": this.textarea.value, "selStart": this.textarea.selectionStart, "selEnd": this.textarea.selectionEnd } );
 			var prev= this.previous.pop();
-			if(prev["text"]==this.textarea.value && this.previous.length > 0)
-				prev=this.previous.pop();						
-			this.textarea.value= prev["text"];
-			this.last_undo= prev["text"];
+			if( prev["text"] == this.textarea.value && this.previous.length > 0 )
+				prev	=this.previous.pop();						
+			this.textarea.value	= prev["text"];
+			this.last_undo		= prev["text"];
 			this.area_select(prev["selStart"], prev["selEnd"]-prev["selStart"]);
 			this.switchClassSticky(_$("redo"), 'editAreaButtonNormal', false);
 			this.resync_highlight(true);
@@ -392,9 +393,9 @@
 	};
 	
 	EditArea.prototype.redo= function(){
-		if(this.next.length > 0){
-			/*if(this.isIE)
-				this.getIESelection();*/
+		if(this.next.length > 0)
+		{
+			/*this.getIESelection();*/
 			//var pos_cursor=this.textarea.selectionStart;
 			var next= this.next.pop();
 			this.previous.push(next);
@@ -614,11 +615,6 @@
 			html.scrollTop		= 0;
 			html.scrollLeft		= 0;
 			
-		
-			//html.style.backgroundColor= "#FF0000"; 
-//	alert(screen.height+"\n"+window.innerHeight+"\n"+html.clientHeight+"\n"+window.offsetHeight+"\n"+document.body.offsetHeight);
-			
-			
 			frame.style.position	= "absolute";
 			frame.style.width		= html.clientWidth+"px";
 			frame.style.height		= html.clientHeight+"px";
@@ -832,11 +828,13 @@
 		
 		a.wrap= wrap_mode;
 		a.setAttribute('wrap', wrap_mode);
-		// seul IE supporte de changer à la volée le wrap mode du textarea
-		if(!this.isIE){
+		// only IE can change wrap mode on the fly without element reloading
+		if(!this.isIE)
+		{
 			var start=a.selectionStart, end= a.selectionEnd;
 			var parNod = a.parentNode, nxtSib = a.nextSibling;
-			parNod.removeChild(a); parNod.insertBefore(a, nxtSib);
+			parNod.removeChild(a);
+			parNod.insertBefore(a, nxtSib);
 			this.area_select(start, end-start);
 		}
 		// reset some optimisation

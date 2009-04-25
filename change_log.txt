@@ -1,6 +1,7 @@
 **** v 0.8.1.1 ****
 - Fix bug of frequent syntax desynchronisation when the first character of the textarea was highlighted
 - In unload now check that parent.editareaLoader still exists before calling it
+- Now consider that gecko and webkit based browser are valid browsers (but I won't test them all)
 
 **** v 0.8.1 ****
 - Improved speed of text highlighting process for huge file. Now we try to only insert or delete the changed caracters inside DOM text node instead of refreshing the whole area. (3 time faster in firefox)

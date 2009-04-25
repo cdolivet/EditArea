@@ -94,7 +94,7 @@ function EditAreaLoader(){
 	// navigator identification
 	t.set_browser_infos(t);
 
-	if(t.isIE>=6 || t.isOpera>=9 || t.isFirefox || t.isChrome || t.isCamino || t.isSafari>=3)
+	if(t.isIE>=6 || t.isGecko || ( t.isWebKit && !t.isSafari<3 ) || t.isOpera>=9  || t.isCamino )
 		t.isValidBrowser=true;
 	else
 		t.isValidBrowser=false;
@@ -120,9 +120,13 @@ EditAreaLoader.prototype ={
 	// add browser informations to the object passed in parameter
 	set_browser_infos : function(o){
 		ua= navigator.userAgent;
-		o.isMacOS = (ua.indexOf('Mac OS') != -1);
-
-		o.isIE = (navigator.appName == "Microsoft Internet Explorer");
+		
+		// general detection
+		o.isWebKit	= /WebKit/.test(ua);
+		o.isGecko	= !o.isWebKit && /Gecko/.test(ua);
+		o.isMac		= /Mac/.test(ua);
+		
+		o.isIE	= (navigator.appName == "Microsoft Internet Explorer");
 		if(o.isIE){
 			o.isIE = ua.replace(/^.*?MSIE\s+([0-9\.]+).*$/, "$1");
 			if(o.isIE<6)
@@ -138,15 +142,15 @@ EditAreaLoader.prototype ={
 
 		if(o.isFirefox =(ua.indexOf('Firefox') != -1))
 			o.isFirefox = ua.replace(/^.*?Firefox.*?([0-9\.]+).*$/i, "$1");
-		// Iceweasel is a clone of Firefox 	
-		if(o.isIceweasel =(ua.indexOf('Iceweasel') != -1))
-			o.isFirefox= o.isIceweasel = ua.replace(/^.*?Iceweasel.*?([0-9\.]+).*$/i, "$1");
-		// grandparadisio is a clone of Firefox 	
-		if(o.GranParadiso =(ua.indexOf('GranParadiso') != -1))
-			o.isFirefox= o.isGranParadiso = ua.replace(/^.*?GranParadiso.*?([0-9\.]+).*$/i, "$1");
-		// BonEcho is a clone of Firefox
-		if(o.BonEcho =(ua.indexOf('BonEcho') != -1))
-			o.isFirefox= o.isBonEcho = ua.replace(/^.*?BonEcho.*?([0-9\.]+).*$/i, "$1");
+		// Firefox clones 	
+		if( ua.indexOf('Iceweasel') != -1 )
+			o.isFirefox	= ua.replace(/^.*?Iceweasel.*?([0-9\.]+).*$/i, "$1");
+		if( ua.indexOf('GranParadiso') != -1 )
+			o.isFirefox	= ua.replace(/^.*?GranParadiso.*?([0-9\.]+).*$/i, "$1");
+		if( ua.indexOf('BonEcho') != -1 )
+			o.isFirefox	= ua.replace(/^.*?BonEcho.*?([0-9\.]+).*$/i, "$1");
+		if( ua.indexOf('SeaMonkey') != -1)
+			o.isFirefox = (ua.replace(/^.*?SeaMonkey.*?([0-9\.]+).*$/i, "$1") ) + 1;
 			
 		if(o.isCamino =(ua.indexOf('Camino') != -1))
 			o.isCamino = ua.replace(/^.*?Camino.*?([0-9\.]+).*$/i, "$1");
@@ -158,7 +162,7 @@ EditAreaLoader.prototype ={
 			o.isChrome = ua.replace(/^.*?Chrome.*?([0-9\.]+).*$/i, "$1");
 			o.isSafari	= false;
 		}
-	
+		
 	},
 	
 	window_loaded : function(){
@@ -487,8 +491,8 @@ EditAreaLoader.prototype ={
 			} catch(e){};
 			if(this.isIE){
 				t.selectionStart= selStart;
-				t.selectionEnd= selEnd;
-				t.focused=true;
+				t.selectionEnd	= selEnd;
+				t.focused		= true;
 				set_IE_selection(t);
 			}else{
 				if(this.isOpera && this.isOpera < 9.6 ){	// Opera bug when moving selection start and selection end

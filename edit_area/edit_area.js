@@ -170,15 +170,15 @@
 	
 		// init key events
 		if(t.isOpera)
-			_$("editor").onkeypress= keyDown;
+			_$("editor").onkeypress	= keyDown;
 		else
-			_$("editor").onkeydown= keyDown;
+			_$("editor").onkeydown	= keyDown;
 
 		for(var i=0; i<t.inlinePopup.length; i++){
-			if(t.isIE || t.isFirefox)
-				_$(t.inlinePopup[i]["popup_id"]).onkeydown= keyDown;
+			if(t.isOpera)
+				_$(t.inlinePopup[i]["popup_id"]).onkeypress	= keyDown;
 			else
-				_$(t.inlinePopup[i]["popup_id"]).onkeypress= keyDown;
+				_$(t.inlinePopup[i]["popup_id"]).onkeydown	= keyDown;
 		}
 		
 		if(s["allow_resize"]=="both" || s["allow_resize"]=="x" || s["allow_resize"]=="y")
@@ -229,12 +229,6 @@
 			a.style.marginLeft		="-3px";
 			if( t.isSafari < 3.2 ) // Safari 3.0 (3.1?)
 				a.style.marginTop	="1px";
-		}
-		
-		if( t.isChrome ){
-			t.editor_area.style.position	= "absolute";
-			a.style.marginLeft	="0px";
-			a.style.marginTop	="0px";
 		}
 		
 		// si le textarea n'est pas grand, un click sous le textarea doit provoquer un focus sur le textarea

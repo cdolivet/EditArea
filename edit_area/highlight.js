@@ -10,8 +10,7 @@
 			return false;
 	
 			
-		if(this.isIE)
-			this.getIESelection();
+		this.getIESelection();
 		var pos_start= this.textarea.selectionStart;
 		var pos_end= this.textarea.selectionEnd;
 		
@@ -22,8 +21,7 @@
 		this.textarea.focus();
 		this.textarea.selectionStart = pos_start;
 		this.textarea.selectionEnd = pos_end;
-		if(this.isIE)
-			this.setIESelection();
+		this.setIESelection();
 				
 	};
 	
