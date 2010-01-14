@@ -646,7 +646,7 @@
 				t.scroll_to_view();
 				t.focus();
 			}else{
-				setTimeout("p.editAreaLoader.execCommand('"+ t.id +"', 'update_size();');editArea.focus();", 10);
+				setTimeout("parent.editAreaLoader.execCommand('"+ t.id +"', 'update_size();');editArea.focus();", 10);
 			}	
 			
 	
