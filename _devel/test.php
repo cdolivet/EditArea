@@ -23,7 +23,7 @@
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
 -->
 
-<script type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>
+<script type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.gz"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
@@ -403,7 +403,14 @@ Test with php syntax.<br />
 <div id="container" stfyle='position: absolute; top: 80px; left: 150px; border: solid red 1px; '>
 <textarea id="src" style="height: 350px; width: 913px;" name="toto" enctype="multipart/form-data" onfojcus="this.focused=true;" onbjlur="this.focused=false;" >
 <?php
-	$val='<?php	
+	$val='var simple_object = {
+	name: "myname",
+};
+<a href="toto">
+	bouh
+</a>
+<!-- it s a comment -->';
+$tmp ='<?php	
 	$authors	= array();
 	$news		= array();
 	/* this is a long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long long comment for showing word-wrap feature */
@@ -448,7 +455,7 @@ $val2='
 ';
 
 
-for($i=0; $i<50; $i++)
+for($i=0; $i<1; $i++)
 	echo $val;
 ?>
 </textarea>
