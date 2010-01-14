@@ -7,6 +7,7 @@
 - Bug fix: [2887118] UTF-8 encoded URLs return wrong base URL
 - Bug fix: [2851936] Unresolved reference to isIE in elements_functions.js 
 - Bug fix: [2886836] get_IE_selection bug when closed...
+- bug fix: JavaScript error when switching to fullscreen (https://sourceforge.net/projects/editarea/forums/forum/556921/topic/3388824)
 - Bug fix (but not applicable due to change back) : [2854519, 2854642, 2792217, 2834579 ] Desynchronisation occcured with <, > and & characters
 
 **** v 0.8.1.1 ****

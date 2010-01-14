@@ -23,7 +23,7 @@
 <script language="Javascript" type="text/javascript" src="rico_1.1.2.js"></script>
 -->
 
-<script type="text/javascript" src="../edit_area/edit_area_compressor.php"></script>
+<script type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_compressor.php?plugins"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.gz"></script>-->
 <!--<script language="Javascript" type="text/javascript" src="../edit_area/edit_area_full.js"></script>
