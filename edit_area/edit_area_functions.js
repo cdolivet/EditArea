@@ -615,7 +615,7 @@
 			html.scrollTop		= 0;
 			html.scrollLeft		= 0;
 			
-			frame.style.position	= "absolute";
+			frame.style.position	= "fixed";
 			frame.style.width		= html.clientWidth+"px";
 			frame.style.height		= html.clientHeight+"px";
 			frame.style.display		= "block";
@@ -625,8 +625,8 @@
 			
 			// if the iframe was in a div with position absolute, the top and left are the one of the div, 
 			// so I fix it by seeing at witch position the iframe start and correcting it
-			frame.style.top			= "-"+p.calculeOffsetTop(frame)+"px";
-			frame.style.left		= "-"+p.calculeOffsetLeft(frame)+"px";
+			//frame.style.top			= "-"+p.calculeOffsetTop(frame)+"px";
+			//frame.style.left		= "-"+p.calculeOffsetLeft(frame)+"px";
 			
 		//	parent.editAreaLoader.execCommand(t.id, "update_size();");
 		//	var body=parent.document.getElementsByTagName("body")[0];
